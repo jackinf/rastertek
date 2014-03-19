@@ -4,10 +4,10 @@
 #ifndef _GRAPHICSCLASS_H_
 #define _GRAPHICSCLASS_H_
 
-//////////////
-// INCLUDES //
-//////////////
-#include <Windows.h>
+///////////////////////
+// MY CLASS INCLUDES //
+///////////////////////
+#include "d3dclass.h"
 
 /////////////
 // GLOBALS //
@@ -35,7 +35,7 @@ private:
 	bool Render();
 
 private:
-
+	D3DClass* m_D3D;
 };
 
 #endif
