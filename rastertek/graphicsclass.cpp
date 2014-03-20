@@ -3,6 +3,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "graphicsclass.h"
 
+
 GraphicsClass::GraphicsClass()
 {
 	m_D3D = 0;
@@ -11,17 +12,21 @@ GraphicsClass::GraphicsClass()
 	m_ColorShader = 0;
 }
 
+
 GraphicsClass::GraphicsClass(const GraphicsClass& other)
 {
 }
+
 
 GraphicsClass::~GraphicsClass()
 {
 }
 
+
 bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 {
 	bool result;
+
 
 	// Create the Direct3D object.
 	m_D3D = new D3DClass;
@@ -34,10 +39,9 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	result = m_D3D->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR);
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize Direct3D", L"Error", MB_OK);
+		MessageBox(hwnd, L"Could not initialize Direct3D.", L"Error", MB_OK);
 		return false;
 	}
-
 
 	// Create the camera object.
 	m_Camera = new CameraClass;
@@ -82,6 +86,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	return true;
 }
 
+
 void GraphicsClass::Shutdown()
 {
 	// Release the color shader object.
@@ -107,9 +112,10 @@ void GraphicsClass::Shutdown()
 		m_Camera = 0;
 	}
 
+	// Release the D3D object.
 	if (m_D3D)
 	{
-		m_D3D->ShutDown();
+		m_D3D->Shutdown();
 		delete m_D3D;
 		m_D3D = 0;
 	}
@@ -117,10 +123,13 @@ void GraphicsClass::Shutdown()
 	return;
 }
 
+
 bool GraphicsClass::Frame()
 {
 	bool result;
 
+
+	// Render the graphics scene.
 	result = Render();
 	if (!result)
 	{
@@ -130,13 +139,15 @@ bool GraphicsClass::Frame()
 	return true;
 }
 
+
 bool GraphicsClass::Render()
 {
-	D3DXMATRIX viewMatrix, projectionMatrix, worldMatrix;
+	D3DXMATRIX worldMatrix, viewMatrix, projectionMatrix;
 	bool result;
 
+
 	// Clear the buffers to begin the scene.
-	m_D3D->BeginScene(0.8f, 0.8f, 0.2f, 1.0f);
+	m_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
 
 	// Generate the view matrix based on the camera's position.
 	m_Camera->Render();

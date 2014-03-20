@@ -68,7 +68,7 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 
 	// Create the vertex array.
 	vertices = new VertexType[m_vertexCount];
-	if (vertices)
+	if (!vertices)
 	{
 		return false;
 	}
@@ -87,7 +87,7 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 	vertices[1].position = D3DXVECTOR3(0.0f, 1.0f, 0.0f); // Top middle
 	vertices[1].color = D3DXVECTOR4(0.0f, 1.0f, 0.0f, 1.0f);
 
-	vertices[1].position = D3DXVECTOR3(1.0f, -1.0f, 0.0f); // Bottom right
+	vertices[2].position = D3DXVECTOR3(1.0f, -1.0f, 0.0f); // Bottom right
 	vertices[2].color = D3DXVECTOR4(0.0f, 1.0f, 0.0f, 1.0f);
 
 	indices[0] = 0;	// Bottom left
@@ -173,7 +173,7 @@ void ModelClass::RenderBuffers(ID3D11DeviceContext* deviceContext)
 	offset = 0;
 
 	// Set the vertex buffer to active in the input assembler so it can be rendered.
-	deviceContext->IAGetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
+	deviceContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
 
 	// Set the index buffer to active in the input assembler so it can be rendered.
 	deviceContext->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);

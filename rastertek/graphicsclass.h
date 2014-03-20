@@ -4,6 +4,7 @@
 #ifndef _GRAPHICSCLASS_H_
 #define _GRAPHICSCLASS_H_
 
+
 ///////////////////////
 // MY CLASS INCLUDES //
 ///////////////////////
@@ -12,13 +13,15 @@
 #include "modelclass.h"
 #include "colorshaderclass.h"
 
+
 /////////////
 // GLOBALS //
 /////////////
-const bool FULL_SCREEN = false;
+const bool FULL_SCREEN = true;
 const bool VSYNC_ENABLED = true;
 const float SCREEN_DEPTH = 1000.0f;
 const float SCREEN_NEAR = 0.1f;
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: GraphicsClass

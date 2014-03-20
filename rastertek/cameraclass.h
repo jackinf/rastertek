@@ -4,10 +4,12 @@
 #ifndef _CAMERACLASS_H_
 #define _CAMERACLASS_H_
 
+
 //////////////
 // INCLUDES //
 //////////////
-#include <D3DX10math.h>
+#include <d3dx10math.h>
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: CameraClass
@@ -16,7 +18,7 @@ class CameraClass
 {
 public:
 	CameraClass();
-	CameraClass(const CameraClass& other);
+	CameraClass(const CameraClass&);
 	~CameraClass();
 
 	void SetPosition(float, float, float);
