@@ -6,7 +6,7 @@
 // GLOBALS //
 /////////////
 Texture2D shaderTexture;
-SamplerState samplerState;
+SamplerState SampleType;
 
 //////////////
 // TYPEDEFS //
