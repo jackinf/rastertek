@@ -78,10 +78,10 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 	HRESULT result;
 
 	// Set the number of vertices in the vertex array.
-	m_vertexCount = 3;
+	m_vertexCount = 6;
 
 	// Set the number of indices in the vertex array.
-	m_indexCount = 3;
+	m_indexCount = 6;
 
 	// Create the vertex array.
 	vertices = new VertexType[m_vertexCount];
@@ -100,16 +100,34 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 	// Load the vertex array with data.
 	vertices[0].position = D3DXVECTOR3(-1.0f, -1.0f, 0.0f);	// Bottom left
 	vertices[0].texture = D3DXVECTOR2(0.0f, 1.0f);
+	vertices[0].normal = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
 
-	vertices[1].position = D3DXVECTOR3(0.0f, 1.0f, 0.0f); // Top middle
-	vertices[1].texture = D3DXVECTOR2(0.5f, 0.0f);
+	vertices[1].position = D3DXVECTOR3(-1.0f, 1.0f, 0.0f); // Top middle
+	vertices[1].texture = D3DXVECTOR2(0.0f, 0.0f);
+	vertices[1].normal = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
 
-	vertices[2].position = D3DXVECTOR3(1.0f, -1.0f, 0.0f); // Bottom right
-	vertices[2].texture = D3DXVECTOR2(1.0f, 1.0f);
+	vertices[2].position = D3DXVECTOR3(1.0f, 1.0f, 0.0f); // Bottom right
+	vertices[2].texture = D3DXVECTOR2(1.0f, 0.0f);
+	vertices[2].normal = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
+
+	vertices[3].position = D3DXVECTOR3(1.0f, 1.0f, 0.0f);	// Bottom left
+	vertices[3].texture = D3DXVECTOR2(1.0f, 0.0f);
+	vertices[3].normal = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
+
+	vertices[4].position = D3DXVECTOR3(1.0f, -1.0f, 0.0f); // Top middle
+	vertices[4].texture = D3DXVECTOR2(1.0f, 1.0f);
+	vertices[4].normal = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
+
+	vertices[5].position = D3DXVECTOR3(-1.0f, -1.0f, 0.0f); // Bottom right
+	vertices[5].texture = D3DXVECTOR2(0.0f, 1.0f);
+	vertices[5].normal = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
 
 	indices[0] = 0;	// Bottom left
 	indices[1] = 1;	// Top middle;
 	indices[2] = 2;	// Bottom right
+	indices[3] = 3;	// Bottom left
+	indices[4] = 4;	// Top middle;
+	indices[5] = 5;	// Bottom right
 
 	// Set up the description of the static vertex buffer.
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;

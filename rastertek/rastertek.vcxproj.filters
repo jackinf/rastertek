@@ -48,6 +48,12 @@
     <ClCompile Include="textureshaderclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="lightshaderclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="lightclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="systemclass.h">
@@ -77,6 +83,12 @@
     <ClInclude Include="textureshaderclass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="lightshaderclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lightclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="pscolor.hlsl">
@@ -91,5 +103,16 @@
     <FxCompile Include="pstexture.hlsl">
       <Filter>Source Files</Filter>
     </FxCompile>
+    <FxCompile Include="vslight.hlsl">
+      <Filter>Source Files</Filter>
+    </FxCompile>
+    <FxCompile Include="pslight.hlsl">
+      <Filter>Source Files</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="watson.dds">
+      <Filter>Source Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
