@@ -241,7 +241,7 @@ void TextureShaderClass::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND
 	bufferSize = errorMessage->GetBufferSize();
 
 	// Open a file to write the error message to.
-	fout.open("shader-errpr.txt");
+	fout.open("shader-error.txt");
 
 	// Write out the error message.
 	for (i = 0; i<bufferSize; i++)
