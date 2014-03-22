@@ -5,6 +5,8 @@ VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "rastertek", "rastertek\rastertek.vcxproj", "{8EB962F2-4AE1-49B5-812C-2F6BC84567E6}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "maya_object_converter", "maya_object_converter\maya_object_converter.vcxproj", "{9014DB08-5D31-401F-BA16-817A89E39A77}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -15,6 +17,10 @@ Global
 		{8EB962F2-4AE1-49B5-812C-2F6BC84567E6}.Debug|Win32.Build.0 = Debug|Win32
 		{8EB962F2-4AE1-49B5-812C-2F6BC84567E6}.Release|Win32.ActiveCfg = Release|Win32
 		{8EB962F2-4AE1-49B5-812C-2F6BC84567E6}.Release|Win32.Build.0 = Release|Win32
+		{9014DB08-5D31-401F-BA16-817A89E39A77}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9014DB08-5D31-401F-BA16-817A89E39A77}.Debug|Win32.Build.0 = Debug|Win32
+		{9014DB08-5D31-401F-BA16-817A89E39A77}.Release|Win32.ActiveCfg = Release|Win32
+		{9014DB08-5D31-401F-BA16-817A89E39A77}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

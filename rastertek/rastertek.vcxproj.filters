@@ -114,5 +114,16 @@
     <Image Include="watson.dds">
       <Filter>Source Files</Filter>
     </Image>
+    <Image Include="seafloor.dds">
+      <Filter>Source Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="cube.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+    <Text Include="mayacube.txt">
+      <Filter>Source Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>

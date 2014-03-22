@@ -137,7 +137,12 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <Image Include="seafloor.dds" />
     <Image Include="watson.dds" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="cube.txt" />
+    <Text Include="mayacube.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
