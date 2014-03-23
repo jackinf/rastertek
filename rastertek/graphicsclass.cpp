@@ -110,7 +110,9 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	// Initialize the light object.
 	m_Light->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
 	m_Light->SetDiffuseColor(1.0f, 0.0f, 1.0f, 1.0f);
-	m_Light->SetDirection(1.0f, 0.0f, 0.0f);
+	m_Light->SetDirection(0.0f, 0.0f, 1.0f);
+	m_Light->SetSpecularColor(1.0f, 1.0f, 1.0f, 1.0f);
+	m_Light->SetSpecularPower(32.0f);
 
 	return true;
 }
@@ -218,7 +220,8 @@ bool GraphicsClass::Render(float rotation)
 
 	// Render the model using the light shader.
 	result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-		m_Model->GetTexture(), m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor());
+		m_Model->GetTexture(), m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(),
+		m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
 	if (!result)
 	{
 		return false;
