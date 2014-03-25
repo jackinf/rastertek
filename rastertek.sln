@@ -7,6 +7,18 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "rastertek", "rastertek\rast
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "maya_object_converter", "maya_object_converter\maya_object_converter.vcxproj", "{9014DB08-5D31-401F-BA16-817A89E39A77}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Engine", "Engine", "{599CB587-A4C9-4810-B67A-7A6B80A5E6A2}"
+	ProjectSection(SolutionItems) = preProject
+		Engine\fontps.hlsl = Engine\fontps.hlsl
+		Engine\fontvs.hlsl = Engine\fontvs.hlsl
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "data", "data", "{2927A905-F357-4689-BF90-A96F48BA0778}"
+	ProjectSection(SolutionItems) = preProject
+		Engine\data\font.dds = Engine\data\font.dds
+		Engine\data\fontdata.txt = Engine\data\fontdata.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -24,5 +36,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2927A905-F357-4689-BF90-A96F48BA0778} = {599CB587-A4C9-4810-B67A-7A6B80A5E6A2}
 	EndGlobalSection
 EndGlobal

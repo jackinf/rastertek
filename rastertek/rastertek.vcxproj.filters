@@ -57,6 +57,15 @@
     <ClCompile Include="bitmapclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="fontclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="fontshaderclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="textclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="systemclass.h">
@@ -95,6 +104,15 @@
     <ClInclude Include="bitmapclass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="fontclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="fontshaderclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="textclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="pscolor.hlsl">
@@ -115,6 +133,12 @@
     <FxCompile Include="pslight.hlsl">
       <Filter>Source Files</Filter>
     </FxCompile>
+    <FxCompile Include="fontvs.hlsl">
+      <Filter>Source Files</Filter>
+    </FxCompile>
+    <FxCompile Include="fontps.hlsl">
+      <Filter>Source Files</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="watson.dds">
@@ -123,12 +147,18 @@
     <Image Include="seafloor.dds">
       <Filter>Source Files</Filter>
     </Image>
+    <Image Include="font.dds">
+      <Filter>Source Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Text Include="cube.txt">
       <Filter>Source Files</Filter>
     </Text>
     <Text Include="mayacube.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+    <Text Include="fontdata.txt">
       <Filter>Source Files</Filter>
     </Text>
   </ItemGroup>
