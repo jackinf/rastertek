@@ -23,6 +23,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "data", "data", "{2927A905-F
 	ProjectSection(SolutionItems) = preProject
 		Engine\data\font.dds = Engine\data\font.dds
 		Engine\data\fontdata.txt = Engine\data\fontdata.txt
+		Engine\data\mousepointer.dds = Engine\data\mousepointer.dds
 	EndProjectSection
 EndProject
 Global

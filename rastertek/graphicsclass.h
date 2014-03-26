@@ -20,6 +20,8 @@ const float SCREEN_NEAR = 0.1f;
 #include "d3dclass.h"
 #include "cameraclass.h"
 #include "textclass.h"
+#include "textureshaderclass.h"
+#include "bitmapclass.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -41,6 +43,9 @@ private:
 	D3DClass* m_D3D;
 	CameraClass* m_Camera;
 	TextClass* m_Text;
+	TextureShaderClass* m_TextureShader;
+	BitmapClass* m_Bitmap;
+	int m_mouseX, m_mouseY;
 };
 
 #endif

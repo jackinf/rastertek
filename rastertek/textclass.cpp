@@ -76,11 +76,11 @@ bool TextClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCont
 	}
 
 	// Now update the sentence vertex buffer with the new string information.
-	result = UpdateSentence(m_sentence1, "Hello World", 50, 400, 0.6f, 1.0f, 0.6f, deviceContext);
-	if (!result)
-	{
-		return false;
-	}
+	//result = UpdateSentence(m_sentence1, "Hello World", 50, 400, 0.6f, 1.0f, 0.6f, deviceContext);
+	//if (!result)
+	//{
+	//	return false;
+	//}
 
 	// Initialize the second sentence.
 	result = InitializeSentence(&m_sentence2, 16, device);
@@ -90,11 +90,11 @@ bool TextClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCont
 	}
 
 	// Now update the sentence vertex buffer with the new string information.
-	result = UpdateSentence(m_sentence2, "Goodbye ppl", 300, 300, 1.0f, 0.3f, 0.8f, deviceContext);
-	if (!result)
-	{
-		return false;
-	}
+	//result = UpdateSentence(m_sentence2, "Goodbye ppl", 300, 300, 1.0f, 0.3f, 0.8f, deviceContext);
+	//if (!result)
+	//{
+	//	return false;
+	//}
 
 	result = InitializeSentence(&m_sentence3, 16, device);
 	if (!result)
