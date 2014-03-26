@@ -11,6 +11,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Engine", "Engine", "{599CB5
 	ProjectSection(SolutionItems) = preProject
 		Engine\fontps.hlsl = Engine\fontps.hlsl
 		Engine\fontvs.hlsl = Engine\fontvs.hlsl
+		Engine\pscolor.hlsl = Engine\pscolor.hlsl
+		Engine\pslight.hlsl = Engine\pslight.hlsl
+		Engine\pstexture.hlsl = Engine\pstexture.hlsl
+		Engine\vscolor.hlsl = Engine\vscolor.hlsl
+		Engine\vslight.hlsl = Engine\vslight.hlsl
+		Engine\vstexture.hlsl = Engine\vstexture.hlsl
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "data", "data", "{2927A905-F357-4689-BF90-A96F48BA0778}"

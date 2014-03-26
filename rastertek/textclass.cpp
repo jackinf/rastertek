@@ -11,6 +11,7 @@ TextClass::TextClass()
 
 	m_sentence1 = 0;
 	m_sentence2 = 0;
+	m_sentence3 = 0;
 }
 
 
@@ -75,13 +76,13 @@ bool TextClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCont
 	}
 
 	// Now update the sentence vertex buffer with the new string information.
-	result = UpdateSentence(m_sentence1, "Hello", 100, 100, 1.0f, 1.0f, 1.0f, deviceContext);
+	result = UpdateSentence(m_sentence1, "Hello World", 50, 400, 0.6f, 1.0f, 0.6f, deviceContext);
 	if (!result)
 	{
 		return false;
 	}
 
-	// Initialize the first sentence.
+	// Initialize the second sentence.
 	result = InitializeSentence(&m_sentence2, 16, device);
 	if (!result)
 	{
@@ -89,7 +90,19 @@ bool TextClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCont
 	}
 
 	// Now update the sentence vertex buffer with the new string information.
-	result = UpdateSentence(m_sentence2, "Goodbye", 100, 200, 1.0f, 1.0f, 0.0f, deviceContext);
+	result = UpdateSentence(m_sentence2, "Goodbye ppl", 300, 300, 1.0f, 0.3f, 0.8f, deviceContext);
+	if (!result)
+	{
+		return false;
+	}
+
+	result = InitializeSentence(&m_sentence3, 16, device);
+	if (!result)
+	{
+		return false;
+	}
+
+	result = UpdateSentence(m_sentence3, "Third sentence", 100, 60, 0.8, 0.4, 0.8, deviceContext);
 	if (!result)
 	{
 		return false;
@@ -106,6 +119,8 @@ void TextClass::Shutdown()
 
 	// Release the second sentence.
 	ReleaseSentence(&m_sentence2);
+
+	ReleaseSentence(&m_sentence3);
 
 	// Release the font shader object.
 	if (m_FontShader)
@@ -141,6 +156,12 @@ bool TextClass::Render(ID3D11DeviceContext* deviceContext, D3DXMATRIX worldMatri
 
 	// Draw the second sentence.
 	result = RenderSentence(deviceContext, m_sentence2, worldMatrix, orthoMatrix);
+	if (!result)
+	{
+		return false;
+	}
+	
+	result = RenderSentence(deviceContext, m_sentence3, worldMatrix, orthoMatrix);
 	if (!result)
 	{
 		return false;

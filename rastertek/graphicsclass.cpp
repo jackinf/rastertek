@@ -121,6 +121,7 @@ bool GraphicsClass::Render()
 	// Clear the buffers to begin the scene.
 	m_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
 
+
 	// Generate the view matrix based on the camera's position.
 	m_Camera->Render();
 
