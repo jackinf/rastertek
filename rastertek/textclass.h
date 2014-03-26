@@ -38,6 +38,7 @@ public:
 	bool Initialize(ID3D11Device*, ID3D11DeviceContext*, HWND, int, int, D3DXMATRIX);
 	void Shutdown();
 	bool Render(ID3D11DeviceContext*, D3DXMATRIX, D3DXMATRIX);
+	bool SetMousePosition(int, int, ID3D11DeviceContext*);
 
 private:
 	bool InitializeSentence(SentenceType**, int, ID3D11Device*);
