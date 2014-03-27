@@ -9,6 +9,9 @@ SystemClass::SystemClass()
 	m_Input = 0;
 	m_Graphics = 0;
 	m_Sound = 0;
+	m_Fps = 0;
+	m_Cpu = 0;
+	m_Timer = 0;
 }
 
 
@@ -64,6 +67,41 @@ bool SystemClass::Initialize()
 		return false;
 	}
 
+	// Create the fps object.
+	m_Fps = new FpsClass;
+	if (!m_Fps)
+	{
+		return false;
+	}
+
+	// Initialize the fps object.
+	m_Fps->Initialize();
+
+	// Create the cpu object.
+	m_Cpu = new CpuClass;
+	if (!m_Cpu)
+	{
+		return false;
+	}
+
+	// Initialize the cpu object.
+	m_Cpu->Initialize();
+
+	// Create the timer object.
+	m_Timer = new TimerClass;
+	if (!m_Timer)
+	{
+		return false;
+	}
+
+	// Initialize the timer object.
+	result = m_Timer->Initialize();
+	if (!result)
+	{
+		MessageBox(m_hwnd, L"Could not initialize the Timer object.", L"Error", MB_OK);
+		return false;
+	}
+
 	// Create the sound object.
 	m_Sound = new SoundClass;
 	if (!m_Sound)
@@ -91,6 +129,28 @@ void SystemClass::Shutdown()
 		m_Sound->Shutdown();
 		delete m_Sound;
 		m_Sound = 0;
+	}
+
+	// Release the timer object.
+	if (m_Timer)
+	{
+		delete m_Timer;
+		m_Timer = 0;
+	}
+
+	// Release the cpu object.
+	if (m_Cpu)
+	{
+		m_Cpu->Shutdown();
+		delete m_Cpu;
+		m_Cpu = 0;
+	}
+
+	// Release the fps object.
+	if (m_Fps)
+	{
+		delete m_Fps;
+		m_Fps = 0;
 	}
 
 	// Release the graphics object.
@@ -166,7 +226,12 @@ void SystemClass::Run()
 bool SystemClass::Frame()
 {
 	bool result;
-	int mouseX, mouseY;
+	//int mouseX, mouseY;
+
+	// Update the system stats.
+	m_Timer->Frame();
+	m_Fps->Frame();
+	m_Cpu->Frame();
 
 	// Do the input frame processing.
 	result = m_Input->Frame();
@@ -175,11 +240,8 @@ bool SystemClass::Frame()
 		return false;
 	}
 
-	// Get the location of the mouse from the input object,
-	m_Input->GetMouseLocation(mouseX, mouseY);
-
 	// Do the frame processing for the graphics object.
-	result = m_Graphics->Frame(mouseX, mouseY);
+	result = m_Graphics->Frame(m_Fps->GetFps(), m_Cpu->GetCpuPercentage(), m_Timer->GetTime());
 	if (!result)
 	{
 		return false;
@@ -191,6 +253,30 @@ bool SystemClass::Frame()
 	{
 		return false;
 	}
+
+	// Do the input frame processing.
+	//result = m_Input->Frame();
+	//if (!result)
+	//{
+	//	return false;
+	//}
+
+	//// Get the location of the mouse from the input object,
+	//m_Input->GetMouseLocation(mouseX, mouseY);
+
+	//// Do the frame processing for the graphics object.
+	//result = m_Graphics->Frame(mouseX, mouseY);
+	//if (!result)
+	//{
+	//	return false;
+	//}
+
+	//// Finally render the graphics to the screen.
+	//result = m_Graphics->Render();
+	//if (!result)
+	//{
+	//	return false;
+	//}
 
 	return true;
 }

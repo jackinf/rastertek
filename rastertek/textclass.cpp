@@ -208,6 +208,74 @@ bool TextClass::SetMousePosition(int mouseX, int mouseY, ID3D11DeviceContext* de
 	return true;
 }
 
+bool TextClass::SetFps(int fps, ID3D11DeviceContext* deviceContext)
+{
+	char tempString[16];
+	char fpsString[16];
+	float red, green, blue;
+	bool result;
+
+	if (fps > 9999)
+	{
+		fps = 9999;
+	}
+
+	_itoa_s(fps, tempString, 10);
+
+	strcpy_s(fpsString, "FPS:");
+	strcat_s(fpsString, tempString);
+
+	if (fps >= 60)
+	{
+		red = 0.0f;
+		green = 1.0f;
+		blue = 0.0f;
+	}
+
+	if (fps >= 30 && fps < 60)
+	{
+		red = 1.0f;
+		green = 1.0f;
+		blue = 0.0f;
+	}
+
+	if (fps < 30)
+	{
+		red = 1.0f;
+		green = 0.0f;
+		blue = 0.0f;
+	}
+
+	result = UpdateSentence(m_sentence1, fpsString, 200, 20, red, green, blue, deviceContext);
+	if (!result)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool TextClass::SetCpu(int cpu, ID3D11DeviceContext* deviceContext)
+{
+	char tempString[16];
+	char cpuString[16];
+	bool result;
+
+	_itoa_s(cpu, tempString, 10);
+
+	strcpy_s(cpuString, "CPU: ");
+	strcat_s(cpuString, tempString);
+	strcat_s(cpuString, "%");
+
+	result = UpdateSentence(m_sentence2, cpuString, 200, 40, 0.0f, 1.0f, 0.0f, deviceContext);
+	if (!result)
+	{
+		return false;
+	}
+
+	return true;
+}
+
 
 bool TextClass::InitializeSentence(SentenceType** sentence, int maxLength, ID3D11Device* device)
 {
