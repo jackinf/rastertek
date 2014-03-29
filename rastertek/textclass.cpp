@@ -277,6 +277,28 @@ bool TextClass::SetCpu(int cpu, ID3D11DeviceContext* deviceContext)
 }
 
 
+bool TextClass::SetRenderCount(int renderCount, ID3D11DeviceContext* deviceContext)
+{
+	char tempString[26];
+	char renderCountString[26];
+	bool result;
+
+	_itoa_s(renderCount, tempString, 10);
+
+
+	strcpy_s(renderCountString, "Render count: ");
+	strcat_s(renderCountString, tempString);
+
+	result = UpdateSentence(m_sentence1, renderCountString, 200, 40, 0.0f, 1.0f, 0.0f, deviceContext);
+	if (!result)
+	{
+		return false;
+	}
+
+	return true;
+
+}
+
 bool TextClass::InitializeSentence(SentenceType** sentence, int maxLength, ID3D11Device* device)
 {
 	VertexType* vertices;

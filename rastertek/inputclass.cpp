@@ -208,6 +208,28 @@ bool InputClass::ReadMouse()
 	return true;
 }
 
+bool InputClass::IsLeftArrowPressed()
+{
+	// Do a bitwise and on the keyboard state to check if the escape key is currently being pressed.
+	if (m_keyboardState[DIK_ESCAPE] & 0x80)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+bool InputClass::IsRightArrowPressed()
+{
+	// Do a bitwise and on the keyboard state to check if the escape key is currently being pressed.
+	if (!(m_keyboardState[DIK_ESCAPE] & 0x80))
+	{
+		return true;
+	}
+
+	return false;
+}
+
 void InputClass::ProcessInput()
 {
 	// Update the location of the mouse cursor based on the change of the mouse location during the frame.
@@ -227,10 +249,10 @@ void InputClass::ProcessInput()
 bool InputClass::IsEscapePressed()
 {
 	// Do a bitwise and on the keyboard state to check if the escape key is currently being pressed.
-	if (m_keyboardState[DIK_ESCAPE] & 0x80)
-	{
-		return true;
-	}
+	//if (m_keyboardState[DIK_ESCAPE] & 0x80)
+	//{
+	//	return true;
+	//}
 
 	return false;
 }

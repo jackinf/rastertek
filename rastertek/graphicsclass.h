@@ -20,8 +20,11 @@ const float SCREEN_NEAR = 0.1f;
 #include "d3dclass.h"
 #include "cameraclass.h"
 #include "textclass.h"
-#include "textureshaderclass.h"
-#include "bitmapclass.h"
+#include "modelclass.h"
+#include "lightshaderclass.h"
+#include "lightclass.h"
+#include "modellistclass.h"
+#include "frustumclass.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -36,16 +39,18 @@ public:
 
 	bool Initialize(int, int, HWND);
 	void Shutdown();
-	bool Frame(int, int, float);
+	bool Frame(float);
 	bool Render();
 
 private:
 	D3DClass* m_D3D;
 	CameraClass* m_Camera;
 	TextClass* m_Text;
-	TextureShaderClass* m_TextureShader;
-	BitmapClass* m_Bitmap;
-	int m_mouseX, m_mouseY;
+	ModelClass* m_Model;
+	LightShaderClass* m_LightShader;
+	LightClass* m_Light;
+	ModelListClass* m_ModelList;
+	FrustumClass* m_Frustum;
 };
 
 #endif

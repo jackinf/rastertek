@@ -21,7 +21,7 @@ TimerClass::~TimerClass()
 bool TimerClass::Initialize()
 {
 	// Check to see if this system supports high performance timers.
-	QueryPerformanceFrequency((LARGE_INTEGER*)&m_frequency);
+	QueryPerformanceCounter((LARGE_INTEGER*)&m_frequency);
 	if (m_frequency == 0)
 	{
 		return false;

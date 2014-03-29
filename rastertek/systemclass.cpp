@@ -8,10 +8,8 @@ SystemClass::SystemClass()
 {
 	m_Input = 0;
 	m_Graphics = 0;
-	m_Sound = 0;
-	m_Fps = 0;
-	m_Cpu = 0;
 	m_Timer = 0;
+	m_Position = 0;
 }
 
 
@@ -67,34 +65,13 @@ bool SystemClass::Initialize()
 		return false;
 	}
 
-	// Create the fps object.
-	m_Fps = new FpsClass;
-	if (!m_Fps)
-	{
-		return false;
-	}
-
-	// Initialize the fps object.
-	m_Fps->Initialize();
-
-	// Create the cpu object.
-	m_Cpu = new CpuClass;
-	if (!m_Cpu)
-	{
-		return false;
-	}
-
-	// Initialize the cpu object.
-	m_Cpu->Initialize();
-
-	// Create the timer object.
-	m_Timer = new TimerClass;
+	m_Timer = new TimerClass();
 	if (!m_Timer)
 	{
 		return false;
 	}
 
-	// Initialize the timer object.
+	//// Initialize the timer object.
 	result = m_Timer->Initialize();
 	if (!result)
 	{
@@ -102,18 +79,10 @@ bool SystemClass::Initialize()
 		return false;
 	}
 
-	// Create the sound object.
-	m_Sound = new SoundClass;
-	if (!m_Sound)
+	// Create the position object.
+	m_Position = new PositionClass;
+	if (!m_Position)
 	{
-		return false;
-	}
-
-	// Initialize the sound object.
-	result = m_Sound->Initialize(m_hwnd);
-	if (!result)
-	{
-		MessageBox(m_hwnd, L"Could not initialize Direct Sound.", L"Error", MB_OK);
 		return false;
 	}
 
@@ -123,12 +92,11 @@ bool SystemClass::Initialize()
 
 void SystemClass::Shutdown()
 {
-	// Release the sound object.
-	if (m_Sound)
+	// Release the position object.
+	if (m_Position)
 	{
-		m_Sound->Shutdown();
-		delete m_Sound;
-		m_Sound = 0;
+		delete m_Position;
+		m_Position = 0;
 	}
 
 	// Release the timer object.
@@ -136,21 +104,6 @@ void SystemClass::Shutdown()
 	{
 		delete m_Timer;
 		m_Timer = 0;
-	}
-
-	// Release the cpu object.
-	if (m_Cpu)
-	{
-		m_Cpu->Shutdown();
-		delete m_Cpu;
-		m_Cpu = 0;
-	}
-
-	// Release the fps object.
-	if (m_Fps)
-	{
-		delete m_Fps;
-		m_Fps = 0;
 	}
 
 	// Release the graphics object.
@@ -225,13 +178,11 @@ void SystemClass::Run()
 
 bool SystemClass::Frame()
 {
-	bool result;
-	//int mouseX, mouseY;
+	bool keyDown, result;
+	float rotationY;
 
 	// Update the system stats.
 	m_Timer->Frame();
-	m_Fps->Frame();
-	m_Cpu->Frame();
 
 	// Do the input frame processing.
 	result = m_Input->Frame();
@@ -240,8 +191,21 @@ bool SystemClass::Frame()
 		return false;
 	}
 
+	// Set the frame time for calculating the updated position.
+	m_Position->SetFrameTime(m_Timer->GetTime());
+
+	// Check if the left or right arrow key has been pressed, if so rotate the camera accordingly.
+	keyDown = m_Input->IsLeftArrowPressed();
+	m_Position->TurnLeft(keyDown);
+
+	keyDown = m_Input->IsRightArrowPressed();
+	m_Position->TurnRight(keyDown);
+
+	// Get the current view point rotation.
+	m_Position->GetRotation(rotationY);
+
 	// Do the frame processing for the graphics object.
-	result = m_Graphics->Frame(m_Fps->GetFps(), m_Cpu->GetCpuPercentage(), m_Timer->GetTime());
+	result = m_Graphics->Frame(rotationY);
 	if (!result)
 	{
 		return false;
@@ -253,30 +217,6 @@ bool SystemClass::Frame()
 	{
 		return false;
 	}
-
-	// Do the input frame processing.
-	//result = m_Input->Frame();
-	//if (!result)
-	//{
-	//	return false;
-	//}
-
-	//// Get the location of the mouse from the input object,
-	//m_Input->GetMouseLocation(mouseX, mouseY);
-
-	//// Do the frame processing for the graphics object.
-	//result = m_Graphics->Frame(mouseX, mouseY);
-	//if (!result)
-	//{
-	//	return false;
-	//}
-
-	//// Finally render the graphics to the screen.
-	//result = m_Graphics->Render();
-	//if (!result)
-	//{
-	//	return false;
-	//}
 
 	return true;
 }

@@ -26,6 +26,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "data", "data", "{2927A905-F
 		Engine\data\mousepointer.dds = Engine\data\mousepointer.dds
 		Engine\data\sound01.wav = Engine\data\sound01.wav
 		Engine\data\sound02.wav = Engine\data\sound02.wav
+		Engine\data\sphere.txt = Engine\data\sphere.txt
 	EndProjectSection
 EndProject
 Global
