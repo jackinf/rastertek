@@ -94,10 +94,12 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="modelclass.cpp" />
     <ClCompile Include="modellistclass.cpp" />
+    <ClCompile Include="multitextureshaderclass.cpp" />
     <ClCompile Include="positionclass.cpp" />
     <ClCompile Include="soundclass.cpp" />
     <ClCompile Include="systemclass.cpp" />
     <ClCompile Include="textclass.cpp" />
+    <ClCompile Include="texturearrayclass.cpp" />
     <ClCompile Include="textureclass.cpp" />
     <ClCompile Include="textureshaderclass.cpp" />
     <ClCompile Include="timerclass.cpp" />
@@ -118,15 +120,25 @@
     <ClInclude Include="lightshaderclass.h" />
     <ClInclude Include="modelclass.h" />
     <ClInclude Include="modellistclass.h" />
+    <ClInclude Include="multitextureshaderclass.h" />
     <ClInclude Include="positionclass.h" />
     <ClInclude Include="soundclass.h" />
     <ClInclude Include="systemclass.h" />
     <ClInclude Include="textclass.h" />
+    <ClInclude Include="texturearrayclass.h" />
     <ClInclude Include="textureclass.h" />
     <ClInclude Include="textureshaderclass.h" />
     <ClInclude Include="timerclass.h" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="..\Engine\multitextureps.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">MultiTexturePixelShader</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="..\Engine\multitexturevs.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">MultiTextureVertexShader</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+    </FxCompile>
     <FxCompile Include="pscolor.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
@@ -137,6 +149,13 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ColorVertexShader</EntryPointName>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\Engine\data\dirt01.dds" />
+    <Image Include="..\Engine\data\stone01.dds" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\Engine\data\square.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

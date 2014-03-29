@@ -87,6 +87,12 @@
     <ClCompile Include="positionclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="multitextureshaderclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="texturearrayclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="systemclass.h">
@@ -155,6 +161,12 @@
     <ClInclude Include="positionclass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="multitextureshaderclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="texturearrayclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="pscolor.hlsl">
@@ -163,5 +175,24 @@
     <FxCompile Include="vscolor.hlsl">
       <Filter>Engine</Filter>
     </FxCompile>
+    <FxCompile Include="..\Engine\multitextureps.hlsl">
+      <Filter>Engine</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Engine\multitexturevs.hlsl">
+      <Filter>Engine</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\Engine\data\stone01.dds">
+      <Filter>Engine</Filter>
+    </Image>
+    <Image Include="..\Engine\data\dirt01.dds">
+      <Filter>Engine</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\Engine\data\square.txt">
+      <Filter>Engine</Filter>
+    </Text>
   </ItemGroup>
 </Project>

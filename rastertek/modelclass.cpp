@@ -7,7 +7,7 @@ ModelClass::ModelClass()
 {
 	m_vertexBuffer = 0;
 	m_indexBuffer = 0;
-	m_Texture = 0;
+	m_TextureArray = 0;
 	m_model = 0;
 }
 
@@ -19,7 +19,7 @@ ModelClass::~ModelClass()
 {
 }
 
-bool ModelClass::Initialize(ID3D11Device* device, char* modelFilename, WCHAR* textureFilename)
+bool ModelClass::Initialize(ID3D11Device* device, char* modelFilename, WCHAR* textureFilename1, WCHAR* textureFilename2)
 {
 	bool result;
 
@@ -37,8 +37,8 @@ bool ModelClass::Initialize(ID3D11Device* device, char* modelFilename, WCHAR* te
 		return false;
 	}
 
-	// Load the texture for this model.
-	result = LoadTexture(device, textureFilename);
+	// Load the textures for this model.
+	result = LoadTextures(device, textureFilename1, textureFilename2);
 	if (!result)
 	{
 		return false;
@@ -50,8 +50,8 @@ bool ModelClass::Initialize(ID3D11Device* device, char* modelFilename, WCHAR* te
 
 void ModelClass::Shutdown()
 {
-	// Release the model texture.
-	ReleaseTexture();
+	// Release the model textures.
+	ReleaseTextures();
 
 	// Release the vertex and index buffers.
 	ShutdownBuffers();
@@ -70,9 +70,9 @@ void ModelClass::Render(ID3D11DeviceContext* deviceContext)
 	return;
 }
 
-ID3D11ShaderResourceView* ModelClass::GetTexture()
+ID3D11ShaderResourceView** ModelClass::GetTextureArray()
 {
-	return m_Texture->GetTexture();
+	return m_TextureArray->GetTextureArray();
 }
 
 int ModelClass::GetIndexCount()
@@ -203,19 +203,19 @@ void ModelClass::RenderBuffers(ID3D11DeviceContext* deviceContext)
 	return;
 }
 
-bool ModelClass::LoadTexture(ID3D11Device* device, WCHAR* filename)
+bool ModelClass::LoadTextures(ID3D11Device* device, WCHAR* filename1, WCHAR* filename2)
 {
 	bool result;
 
-	// Create the texture object.
-	m_Texture = new TextureClass;
-	if (!m_Texture)
+	// Create the texture array object.
+	m_TextureArray = new TextureArrayClass;
+	if (!m_TextureArray)
 	{
 		return false;
 	}
 
-	// Initialize the texture object.
-	result = m_Texture->Initialize(device, filename);
+	// Initialize the texture array object.
+	result = m_TextureArray->Initialize(device, filename1, filename2);
 	if (!result)
 	{
 		return false;
@@ -224,18 +224,19 @@ bool ModelClass::LoadTexture(ID3D11Device* device, WCHAR* filename)
 	return true;
 }
 
-void ModelClass::ReleaseTexture()
+void ModelClass::ReleaseTextures()
 {
-	// Release the texture object.
-	if (m_Texture)
+	// Release the texture array object.
+	if (m_TextureArray)
 	{
-		m_Texture->Shutdown();
-		delete m_Texture;
-		m_Texture = 0;
+		m_TextureArray->Shutdown();
+		delete m_TextureArray;
+		m_TextureArray = 0;
 	}
 
 	return;
 }
+
 
 bool ModelClass::LoadModel(char* filename)
 {

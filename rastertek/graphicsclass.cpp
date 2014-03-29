@@ -8,12 +8,8 @@ GraphicsClass::GraphicsClass()
 {
 	m_D3D = 0;
 	m_Camera = 0;
-	m_Text = 0;
 	m_Model = 0;
-	m_LightShader = 0;
-	m_Light = 0;
-	m_ModelList = 0;
-	m_Frustum = 0;
+	m_MultiTextureShader = 0;
 }
 
 
@@ -44,7 +40,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	result = m_D3D->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR);
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize Direct3D.", L"Error", MB_OK);
+		MessageBox(hwnd, L"Could not initialize Direct3D", L"Error", MB_OK);
 		return false;
 	}
 
@@ -60,21 +56,6 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_Camera->Render();
 	m_Camera->GetViewMatrix(baseViewMatrix);
 
-	// Create the text object.
-	m_Text = new TextClass;
-	if (!m_Text)
-	{
-		return false;
-	}
-
-	// Initialize the text object.
-	result = m_Text->Initialize(m_D3D->GetDevice(), m_D3D->GetDeviceContext(), hwnd, screenWidth, screenHeight, baseViewMatrix);
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize the text object.", L"Error", MB_OK);
-		return false;
-	}
-
 	// Create the model object.
 	m_Model = new ModelClass;
 	if (!m_Model)
@@ -83,59 +64,29 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Initialize the model object.
-	result = m_Model->Initialize(m_D3D->GetDevice(), "../Engine/data/sphere.txt", L"../Engine/data/seafloor.dds");
+	result = m_Model->Initialize(m_D3D->GetDevice(), "../Engine/data/square.txt", L"../Engine/data/stone01.dds",
+		L"../Engine/data/dirt01.dds");
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
 		return false;
 	}
 
-	// Create the light shader object.
-	m_LightShader = new LightShaderClass;
-	if (!m_LightShader)
+	// Create the multitexture shader object.
+	m_MultiTextureShader = new MultiTextureShaderClass;
+	if (!m_MultiTextureShader)
 	{
 		return false;
 	}
 
-	// Initialize the light shader object.
-	result = m_LightShader->Initialize(m_D3D->GetDevice(), hwnd);
+	// Initialize the multitexture shader object.
+	result = m_MultiTextureShader->Initialize(m_D3D->GetDevice(), hwnd);
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize the light shader object.", L"Error", MB_OK);
+		MessageBox(hwnd, L"Could not initialize the multitexture shader object.", L"Error", MB_OK);
 		return false;
 	}
 
-	// Create the light object.
-	m_Light = new LightClass;
-	if (!m_Light)
-	{
-		return false;
-	}
-
-	// Initialize the light object.
-	m_Light->SetDirection(0.0f, 0.0f, 1.0f);
-
-	// Create the model list object.
-	m_ModelList = new ModelListClass;
-	if (!m_ModelList)
-	{
-		return false;
-	}
-
-	// Initialize the model list object.
-	result = m_ModelList->Initialize(25);
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize the model list object.", L"Error", MB_OK);
-		return false;
-	}
-
-	// Create the frustum object.
-	m_Frustum = new FrustumClass;
-	if (!m_Frustum)
-	{
-		return false;
-	}
 
 	return true;
 
@@ -144,34 +95,12 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 void GraphicsClass::Shutdown()
 {
-	// Release the frustum object.
-	if (m_Frustum)
+	// Release the multitexture shader object.
+	if (m_MultiTextureShader)
 	{
-		delete m_Frustum;
-		m_Frustum = 0;
-	}
-
-	// Release the model list object.
-	if (m_ModelList)
-	{
-		m_ModelList->Shutdown();
-		delete m_ModelList;
-		m_ModelList = 0;
-	}
-
-	// Release the light object.
-	if (m_Light)
-	{
-		delete m_Light;
-		m_Light = 0;
-	}
-
-	// Release the light shader object.
-	if (m_LightShader)
-	{
-		m_LightShader->Shutdown();
-		delete m_LightShader;
-		m_LightShader = 0;
+		m_MultiTextureShader->Shutdown();
+		delete m_MultiTextureShader;
+		m_MultiTextureShader = 0;
 	}
 
 	// Release the model object.
@@ -182,14 +111,6 @@ void GraphicsClass::Shutdown()
 		m_Model = 0;
 	}
 
-	// Release the text object.
-	if (m_Text)
-	{
-		m_Text->Shutdown();
-		delete m_Text;
-		m_Text = 0;
-	}
-
 	// Release the camera object.
 	if (m_Camera)
 	{
@@ -197,7 +118,7 @@ void GraphicsClass::Shutdown()
 		m_Camera = 0;
 	}
 
-	// Release the Direct3D object.
+	// Release the D3D object.
 	if (m_D3D)
 	{
 		m_D3D->Shutdown();
@@ -212,10 +133,7 @@ void GraphicsClass::Shutdown()
 bool GraphicsClass::Frame(float rotationY)
 {
 	// Set the position of the camera.
-	m_Camera->SetPosition(0.0f, 0.0f, -10.0f);
-
-	// Set the rotation of the camera.
-	m_Camera->SetRotation(0.0f, rotationY * 400, 0.0f);
+	m_Camera->SetPosition(0.0f, 0.0f, -5.0);
 
 	return true;
 }
@@ -224,11 +142,6 @@ bool GraphicsClass::Frame(float rotationY)
 bool GraphicsClass::Render()
 {
 	D3DXMATRIX worldMatrix, viewMatrix, projectionMatrix, orthoMatrix;
-	int modelCount, renderCount, index;
-	float positionX, positionY, positionZ, radius;
-	D3DXVECTOR4 color;
-	bool renderModel, result;
-
 
 	// Clear the buffers to begin the scene.
 	m_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
@@ -236,79 +149,18 @@ bool GraphicsClass::Render()
 	// Generate the view matrix based on the camera's position.
 	m_Camera->Render();
 
-	// Get the world, view, projection, and ortho matrices from the camera and d3d objects.
+	// Get the world, view, projection, and ortho matrices from the camera and D3D objects.
 	m_D3D->GetWorldMatrix(worldMatrix);
 	m_Camera->GetViewMatrix(viewMatrix);
 	m_D3D->GetProjectionMatrix(projectionMatrix);
 	m_D3D->GetOrthoMatrix(orthoMatrix);
 
-	// Construct the frustum.
-	m_Frustum->ConstructFrustum(SCREEN_DEPTH, projectionMatrix, viewMatrix);
+	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	m_Model->Render(m_D3D->GetDeviceContext());
 
-	// Get the number of models that will be rendered.
-	modelCount = m_ModelList->GetModelCount();
-
-	// Initialize the count of models that have been rendered.
-	renderCount = 0;
-
-	// Go through all the models and render them only if they can be seen by the camera view.
-	for (index = 0; index<modelCount; index++)
-	{
-		// Get the position and color of the sphere model at this index.
-		m_ModelList->GetData(index, positionX, positionY, positionZ, color);
-
-		// Set the radius of the sphere to 1.0 since this is already known.
-		radius = 1.0f;
-
-		// Check if the sphere model is in the view frustum.
-		renderModel = m_Frustum->CheckSphere(positionX, positionY, positionZ, radius);
-
-		// If it can be seen then render it, if not skip this model and check the next sphere.
-		if (renderModel)
-		{
-			// Move the model to the location it should be rendered at.
-			D3DXMatrixTranslation(&worldMatrix, positionX, positionY, positionZ);
-
-			// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
-			m_Model->Render(m_D3D->GetDeviceContext());
-
-			// Render the model using the light shader.
-			m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-				m_Model->GetTexture(), m_Light->GetDirection(), color);
-
-			// Reset to the original world matrix.
-			m_D3D->GetWorldMatrix(worldMatrix);
-
-			// Since this model was rendered then increase the count for this frame.
-			renderCount++;
-		}
-	}
-
-	// Set the number of models that was actually rendered this frame.
-	result = m_Text->SetRenderCount(renderCount, m_D3D->GetDeviceContext());
-	if (!result)
-	{
-		return false;
-	}
-
-	// Turn off the Z buffer to begin all 2D rendering.
-	m_D3D->TurnZBufferOff();
-
-	// Turn on the alpha blending before rendering the text.
-	m_D3D->TurnOnAlphaBlending();
-
-	// Render the text string of the render count.
-	m_Text->Render(m_D3D->GetDeviceContext(), worldMatrix, orthoMatrix);
-	if (!result)
-	{
-		return false;
-	}
-
-	// Turn off alpha blending after rendering the text.
-	m_D3D->TurnOffAlphaBlending();
-
-	// Turn the Z buffer back on now that all 2D rendering has completed.
-	m_D3D->TurnZBufferOn();
+	// Render the model using the multitexture shader.
+	m_MultiTextureShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+		m_Model->GetTextureArray());
 
 	// Present the rendered scene to the screen.
 	m_D3D->EndScene();
