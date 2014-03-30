@@ -9,7 +9,7 @@ GraphicsClass::GraphicsClass()
 	m_D3D = 0;
 	m_Camera = 0;
 	m_Model = 0;
-	m_MultiTextureShader = 0;
+	m_LightMapShader = 0;
 }
 
 
@@ -65,7 +65,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	// Initialize the model object.
 	result = m_Model->Initialize(m_D3D->GetDevice(), "../Engine/data/square.txt", L"../Engine/data/stone01.dds",
-		L"../Engine/data/dirt01.dds");
+		L"../Engine/data/light01.dds");
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
@@ -73,17 +73,17 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Create the multitexture shader object.
-	m_MultiTextureShader = new MultiTextureShaderClass;
-	if (!m_MultiTextureShader)
+	m_LightMapShader = new LightMapShaderClass;
+	if (!m_LightMapShader)
 	{
 		return false;
 	}
 
 	// Initialize the multitexture shader object.
-	result = m_MultiTextureShader->Initialize(m_D3D->GetDevice(), hwnd);
+	result = m_LightMapShader->Initialize(m_D3D->GetDevice(), hwnd);
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize the multitexture shader object.", L"Error", MB_OK);
+		MessageBox(hwnd, L"Could not initialize the light map shader object.", L"Error", MB_OK);
 		return false;
 	}
 
@@ -95,12 +95,12 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 void GraphicsClass::Shutdown()
 {
-	// Release the multitexture shader object.
-	if (m_MultiTextureShader)
+	// Release the light map shader object.
+	if (m_LightMapShader)
 	{
-		m_MultiTextureShader->Shutdown();
-		delete m_MultiTextureShader;
-		m_MultiTextureShader = 0;
+		m_LightMapShader->Shutdown();
+		delete m_LightMapShader;
+		m_LightMapShader = 0;
 	}
 
 	// Release the model object.
@@ -158,8 +158,8 @@ bool GraphicsClass::Render()
 	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
 	m_Model->Render(m_D3D->GetDeviceContext());
 
-	// Render the model using the multitexture shader.
-	m_MultiTextureShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+	// Render the model using the light map shader.
+	m_LightMapShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 		m_Model->GetTextureArray());
 
 	// Present the rendered scene to the screen.
