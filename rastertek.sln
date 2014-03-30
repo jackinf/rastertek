@@ -9,6 +9,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "maya_object_converter", "ma
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Engine", "Engine", "{599CB587-A4C9-4810-B67A-7A6B80A5E6A2}"
 	ProjectSection(SolutionItems) = preProject
+		Engine\alphamapps.hlsl = Engine\alphamapps.hlsl
+		Engine\alphamapvs.hlsl = Engine\alphamapvs.hlsl
+		Engine\bumpmapps.hlsl = Engine\bumpmapps.hlsl
+		Engine\bumpmapvs.hlsl = Engine\bumpmapvs.hlsl
 		Engine\fontps.hlsl = Engine\fontps.hlsl
 		Engine\fontvs.hlsl = Engine\fontvs.hlsl
 		Engine\lightmapps.hlsl = Engine\lightmapps.hlsl
@@ -25,6 +29,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Engine", "Engine", "{599CB5
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "data", "data", "{2927A905-F357-4689-BF90-A96F48BA0778}"
 	ProjectSection(SolutionItems) = preProject
+		Engine\data\alpha01.dds = Engine\data\alpha01.dds
+		Engine\data\bump01.dds = Engine\data\bump01.dds
+		Engine\data\dirt01.dds = Engine\data\dirt01.dds
 		Engine\data\font.dds = Engine\data\font.dds
 		Engine\data\fontdata.txt = Engine\data\fontdata.txt
 		Engine\data\light01.dds = Engine\data\light01.dds
