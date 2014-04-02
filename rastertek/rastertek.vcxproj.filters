@@ -102,6 +102,9 @@
     <ClCompile Include="bumpmapshaderclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="specmapshaderclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="systemclass.h">
@@ -185,6 +188,9 @@
     <ClInclude Include="bumpmapshaderclass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="specmapshaderclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="pscolor.hlsl">
@@ -217,12 +223,27 @@
     <FxCompile Include="..\Engine\bumpmapvs.hlsl">
       <Filter>Engine</Filter>
     </FxCompile>
+    <FxCompile Include="..\Engine\specmapps.hlsl">
+      <Filter>Engine</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Engine\specmapvs.hlsl">
+      <Filter>Engine</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\Engine\data\stone01.dds">
       <Filter>Engine</Filter>
     </Image>
     <Image Include="..\Engine\data\dirt01.dds">
+      <Filter>Engine</Filter>
+    </Image>
+    <Image Include="..\Engine\data\stone02.dds">
+      <Filter>Engine</Filter>
+    </Image>
+    <Image Include="..\Engine\data\bump02.dds">
+      <Filter>Engine</Filter>
+    </Image>
+    <Image Include="..\Engine\data\spec02.dds">
       <Filter>Engine</Filter>
     </Image>
   </ItemGroup>

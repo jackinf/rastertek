@@ -100,6 +100,7 @@
     <ClCompile Include="multitextureshaderclass.cpp" />
     <ClCompile Include="positionclass.cpp" />
     <ClCompile Include="soundclass.cpp" />
+    <ClCompile Include="specmapshaderclass.cpp" />
     <ClCompile Include="systemclass.cpp" />
     <ClCompile Include="textclass.cpp" />
     <ClCompile Include="texturearrayclass.cpp" />
@@ -129,6 +130,7 @@
     <ClInclude Include="multitextureshaderclass.h" />
     <ClInclude Include="positionclass.h" />
     <ClInclude Include="soundclass.h" />
+    <ClInclude Include="specmapshaderclass.h" />
     <ClInclude Include="systemclass.h" />
     <ClInclude Include="textclass.h" />
     <ClInclude Include="texturearrayclass.h" />
@@ -169,6 +171,14 @@
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">MultiTextureVertexShader</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
     </FxCompile>
+    <FxCompile Include="..\Engine\specmapps.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">SpecMapPixelShader</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="..\Engine\specmapvs.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">SpecMapVertexShader</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+    </FxCompile>
     <FxCompile Include="pscolor.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
@@ -181,8 +191,11 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\Engine\data\bump02.dds" />
     <Image Include="..\Engine\data\dirt01.dds" />
+    <Image Include="..\Engine\data\spec02.dds" />
     <Image Include="..\Engine\data\stone01.dds" />
+    <Image Include="..\Engine\data\stone02.dds" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\Engine\data\square.txt" />
