@@ -85,6 +85,7 @@
     <ClCompile Include="colorshaderclass.cpp" />
     <ClCompile Include="cpuclass.cpp" />
     <ClCompile Include="d3dclass.cpp" />
+    <ClCompile Include="debugwindowclass.cpp" />
     <ClCompile Include="fontclass.cpp" />
     <ClCompile Include="fontshaderclass.cpp" />
     <ClCompile Include="fpsclass.cpp" />
@@ -99,6 +100,7 @@
     <ClCompile Include="modellistclass.cpp" />
     <ClCompile Include="multitextureshaderclass.cpp" />
     <ClCompile Include="positionclass.cpp" />
+    <ClCompile Include="rendertextureclass.cpp" />
     <ClCompile Include="soundclass.cpp" />
     <ClCompile Include="specmapshaderclass.cpp" />
     <ClCompile Include="systemclass.cpp" />
@@ -116,6 +118,7 @@
     <ClInclude Include="colorshaderclass.h" />
     <ClInclude Include="cpuclass.h" />
     <ClInclude Include="d3dclass.h" />
+    <ClInclude Include="debugwindowclass.h" />
     <ClInclude Include="fontclass.h" />
     <ClInclude Include="fontshaderclass.h" />
     <ClInclude Include="fpsclass.h" />
@@ -129,6 +132,7 @@
     <ClInclude Include="modellistclass.h" />
     <ClInclude Include="multitextureshaderclass.h" />
     <ClInclude Include="positionclass.h" />
+    <ClInclude Include="rendertextureclass.h" />
     <ClInclude Include="soundclass.h" />
     <ClInclude Include="specmapshaderclass.h" />
     <ClInclude Include="systemclass.h" />
