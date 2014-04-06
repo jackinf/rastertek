@@ -22,6 +22,9 @@ const float SCREEN_NEAR = 0.1f;
 #include "modelclass.h"
 #include "specmapshaderclass.h"
 #include "lightclass.h"
+#include "rendertextureclass.h"
+#include "debugwindowclass.h"
+#include "textureshaderclass.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: GraphicsClass
@@ -39,11 +42,18 @@ public:
 	bool Render();
 
 private:
+	bool RenderToTexture();
+	bool RenderScene();
+
+private:
 	D3DClass* m_D3D;
 	CameraClass* m_Camera;
 	ModelClass* m_Model;
 	SpecMapShaderClass* m_SpecMapShader;
 	LightClass* m_Light;
+	RenderTextureClass* m_RenderTexture;
+	DebugWindowClass* m_DebugWindow;
+	TextureShaderClass* m_TextureShader;
 };
 
 #endif

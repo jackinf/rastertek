@@ -52,6 +52,9 @@ public:
 	void TurnOnAlphaBlending();
 	void TurnOffAlphaBlending();
 
+	ID3D11DepthStencilView* GetDepthStencilView();
+	void SetBackBufferRenderTarget();
+
 private:
 	bool m_vsync_enabled;
 

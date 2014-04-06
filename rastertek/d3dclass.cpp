@@ -591,3 +591,16 @@ void D3DClass::TurnOffAlphaBlending()
 
 	return;
 }
+
+ID3D11DepthStencilView* D3DClass::GetDepthStencilView()
+{
+	return m_depthStencilView;
+}
+
+void D3DClass::SetBackBufferRenderTarget()
+{
+	// Bind the render target view and depth stencil buffer to the output render pipeline.
+	m_deviceContext->OMSetRenderTargets(1, &m_renderTargetView, m_depthStencilView);
+
+	return;
+}
