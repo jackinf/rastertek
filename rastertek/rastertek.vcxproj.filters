@@ -117,6 +117,9 @@
     <ClCompile Include="clipplaneshaderclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="translateshaderclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="systemclass.h">
@@ -215,6 +218,9 @@
     <ClInclude Include="clipplaneshaderclass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="translateshaderclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="pscolor.hlsl">
@@ -263,6 +269,12 @@
       <Filter>Engine</Filter>
     </FxCompile>
     <FxCompile Include="..\Engine\clipplanevs.hlsl">
+      <Filter>Engine</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Engine\translatevs.hlsl">
+      <Filter>Engine</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Engine\translateps.hlsl">
       <Filter>Engine</Filter>
     </FxCompile>
   </ItemGroup>

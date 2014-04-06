@@ -9,7 +9,7 @@ GraphicsClass::GraphicsClass()
 	m_D3D = 0;
 	m_Camera = 0;
 	m_Model = 0;
-	m_ClipPlaneShader = 0;
+	m_TranslateShader = 0;
 }
 
 
@@ -66,14 +66,14 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Create the clip plane shader object.
-	m_ClipPlaneShader = new ClipPlaneShaderClass;
-	if (!m_ClipPlaneShader)
+	m_TranslateShader = new TranslateShaderClass;
+	if (!m_TranslateShader)
 	{
 		return false;
 	}
 
 	// Initialize the clip plane shader object.
-	result = m_ClipPlaneShader->Initialize(m_D3D->GetDevice(), hwnd);
+	result = m_TranslateShader->Initialize(m_D3D->GetDevice(), hwnd);
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the clip plane shader object.", L"Error", MB_OK);
@@ -87,11 +87,11 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 void GraphicsClass::Shutdown()
 {
 	// Release the clip plane shader object.
-	if (m_ClipPlaneShader)
+	if (m_TranslateShader)
 	{
-		m_ClipPlaneShader->Shutdown();
-		delete m_ClipPlaneShader;
-		m_ClipPlaneShader = 0;
+		m_TranslateShader->Shutdown();
+		delete m_TranslateShader;
+		m_TranslateShader = 0;
 	}
 
 	// Release the model object.
@@ -131,12 +131,16 @@ bool GraphicsClass::Frame()
 
 bool GraphicsClass::Render()
 {
-	D3DXVECTOR4 clipPlane;
 	D3DXMATRIX worldMatrix, viewMatrix, projectionMatrix;
 	bool result;
+	static float textureTranslation = 0.0f;
 
-	// Setup a clipping plane.
-	clipPlane = D3DXVECTOR4(0.0f, -1.0f, 0.0f, 0.0f);
+	// Increment the texture translation position.
+	textureTranslation += 0.01f;
+	if (textureTranslation > 1.0f)
+	{
+		textureTranslation -= 1.0f;
+	}
 
 	// Clear the buffers to begin the scene.
 	m_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
@@ -153,8 +157,8 @@ bool GraphicsClass::Render()
 	m_Model->Render(m_D3D->GetDeviceContext());
 
 	// Render the model with the clip plane shader.
-	result = m_ClipPlaneShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix,
-		projectionMatrix, m_Model->GetTexture(), clipPlane);
+	result = m_TranslateShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix,
+		projectionMatrix, m_Model->GetTexture(), textureTranslation);
 	if (!result)
 	{
 		return false;
