@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Engine", "Engine", "{599CB5
 		Engine\alphamapvs.hlsl = Engine\alphamapvs.hlsl
 		Engine\bumpmapps.hlsl = Engine\bumpmapps.hlsl
 		Engine\bumpmapvs.hlsl = Engine\bumpmapvs.hlsl
+		Engine\clipplaneps.hlsl = Engine\clipplaneps.hlsl
+		Engine\clipplanevs.hlsl = Engine\clipplanevs.hlsl
 		Engine\fogps.hlsl = Engine\fogps.hlsl
 		Engine\fogvs.hlsl = Engine\fogvs.hlsl
 		Engine\fontps.hlsl = Engine\fontps.hlsl
@@ -46,6 +48,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "data", "data", "{2927A905-F
 		Engine\data\spec02.dds = Engine\data\spec02.dds
 		Engine\data\sphere.txt = Engine\data\sphere.txt
 		Engine\data\stone02.dds = Engine\data\stone02.dds
+		Engine\data\triangle.txt = Engine\data\triangle.txt
 	EndProjectSection
 EndProject
 Global
