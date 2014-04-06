@@ -205,7 +205,7 @@ bool SystemClass::Frame()
 	m_Position->GetRotation(rotationY);
 
 	// Do the frame processing for the graphics object.
-	result = m_Graphics->Frame();
+	result = m_Graphics->Frame(10);
 	if (!result)
 	{
 		return false;

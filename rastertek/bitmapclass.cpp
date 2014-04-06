@@ -7,7 +7,6 @@ BitmapClass::BitmapClass()
 {
 	m_vertexBuffer = 0;
 	m_indexBuffer = 0;
-	m_Texture = 0;
 }
 
 BitmapClass::BitmapClass(const BitmapClass& other)
@@ -19,7 +18,7 @@ BitmapClass::~BitmapClass()
 {
 }
 
-bool BitmapClass::Initialize(ID3D11Device* device, int screenWidth, int screenHeight, WCHAR* textureFilename, int bitmapWidth, int bitmapHeight)
+bool BitmapClass::Initialize(ID3D11Device* device, int screenWidth, int screenHeight, int bitmapWidth, int bitmapHeight)
 {
 	bool result;
 
@@ -42,23 +41,12 @@ bool BitmapClass::Initialize(ID3D11Device* device, int screenWidth, int screenHe
 		return false;
 	}
 
-	// Load the texture for this model.
-	result = LoadTexture(device, textureFilename);
-	if (!result)
-	{
-		return false;
-	}
-
 	return true;
 
 }
 
 void BitmapClass::Shutdown()
 {
-	// Release the model texture.
-	ReleaseTexture();
-
-	// Shutdown the vertex and index buffers.
 	ShutdownBuffers();
 
 	return;
@@ -85,11 +73,6 @@ bool BitmapClass::Render(ID3D11DeviceContext* deviceContext, int positionX, int 
 int BitmapClass::GetIndexCount()
 {
 	return m_indexCount;
-}
-
-ID3D11ShaderResourceView* BitmapClass::GetTexture()
-{
-	return m_Texture->GetTexture();
 }
 
 bool BitmapClass::InitializeBuffers(ID3D11Device* device)
@@ -299,41 +282,6 @@ void BitmapClass::RenderBuffers(ID3D11DeviceContext* deviceContext)
 
 	// Set the type of primitive that should be rendered from this vertex buffer, in this case triangles.
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	return;
-}
-
-bool BitmapClass::LoadTexture(ID3D11Device* device, WCHAR* filename)
-{
-	bool result;
-
-
-	// Create the texture object.
-	m_Texture = new TextureClass;
-	if (!m_Texture)
-	{
-		return false;
-	}
-
-	// Initialize the texture object.
-	result = m_Texture->Initialize(device, filename);
-	if (!result)
-	{
-		return false;
-	}
-
-	return true;
-}
-
-void BitmapClass::ReleaseTexture()
-{
-	// Release the texture object.
-	if (m_Texture)
-	{
-		m_Texture->Shutdown();
-		delete m_Texture;
-		m_Texture = 0;
-	}
 
 	return;
 }

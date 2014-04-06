@@ -22,7 +22,8 @@ const float SCREEN_NEAR = 0.1f;
 #include "modelclass.h"
 #include "textureshaderclass.h"
 #include "rendertextureclass.h"
-#include "reflectionshaderclass.h"
+#include "bitmapclass.h"
+#include "fadeshaderclass.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: GraphicsClass
@@ -36,12 +37,13 @@ public:
 
 	bool Initialize(int, int, HWND);
 	void Shutdown();
-	bool Frame();
+	bool Frame(float);
 	bool Render();
 
 private:
-	bool RenderToTexture();
-	bool RenderScene();
+	bool RenderToTexture(float);
+	bool RenderFadingScene();
+	bool RenderNormalScene(float);
 
 private:
 	D3DClass* m_D3D;
@@ -49,8 +51,10 @@ private:
 	ModelClass* m_Model;
 	TextureShaderClass* m_TextureShader;
 	RenderTextureClass* m_RenderTexture;
-	ModelClass* m_FloorModel;
-	ReflectionShaderClass* m_ReflectionShader;
+	BitmapClass* m_Bitmap;
+	float m_fadeInTime, m_accumulatedTime, m_fadePercentage;
+	bool m_fadeDone;
+	FadeShaderClass* m_FadeShader;
 };
 
 #endif

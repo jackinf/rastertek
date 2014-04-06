@@ -126,6 +126,9 @@
     <ClCompile Include="reflectionshaderclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="fadeshaderclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="systemclass.h">
@@ -233,6 +236,9 @@
     <ClInclude Include="reflectionshaderclass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="fadeshaderclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="pscolor.hlsl">
@@ -299,6 +305,12 @@
       <Filter>Engine</Filter>
     </FxCompile>
     <FxCompile Include="..\Engine\reflectionps.hlsl">
+      <Filter>Engine</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Engine\fadeps.hlsl">
+      <Filter>Engine</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Engine\fadevs.hlsl">
       <Filter>Engine</Filter>
     </FxCompile>
   </ItemGroup>
