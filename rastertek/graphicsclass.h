@@ -20,10 +20,11 @@ const float SCREEN_NEAR = 0.1f;
 #include "d3dclass.h"
 #include "cameraclass.h"
 #include "modelclass.h"
-#include "textureshaderclass.h"
+#include "lightclass.h"
 #include "rendertextureclass.h"
-#include "bitmapclass.h"
-#include "fadeshaderclass.h"
+#include "lightshaderclass.h"
+#include "refractionshaderclass.h"
+#include "watershaderclass.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: GraphicsClass
@@ -41,20 +42,20 @@ public:
 	bool Render();
 
 private:
-	bool RenderToTexture(float);
-	bool RenderFadingScene();
-	bool RenderNormalScene(float);
+	bool RenderRefractionToTexture();
+	bool RenderReflectionToTexture();
+	bool RenderScene();
 
 private:
 	D3DClass* m_D3D;
 	CameraClass* m_Camera;
-	ModelClass* m_Model;
-	TextureShaderClass* m_TextureShader;
-	RenderTextureClass* m_RenderTexture;
-	BitmapClass* m_Bitmap;
-	float m_fadeInTime, m_accumulatedTime, m_fadePercentage;
-	bool m_fadeDone;
-	FadeShaderClass* m_FadeShader;
+	ModelClass *m_GroundModel, *m_WallModel, *m_BathModel, *m_WaterModel;
+	LightClass* m_Light;
+	RenderTextureClass *m_RefractionTexture, *m_ReflectionTexture;
+	LightShaderClass* m_LightShader;
+	RefractionShaderClass* m_RefractionShader;
+	WaterShaderClass* m_WaterShader;
+	float m_waterHeight, m_waterTranslation;
 };
 
 #endif
