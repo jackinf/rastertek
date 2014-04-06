@@ -9,7 +9,10 @@ GraphicsClass::GraphicsClass()
 	m_D3D = 0;
 	m_Camera = 0;
 	m_Model = 0;
-	m_TranslateShader = 0;
+	m_TextureShader = 0;
+	m_RenderTexture = 0;
+	m_FloorModel = 0;
+	m_ReflectionShader = 0;
 }
 
 
@@ -65,18 +68,62 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
-	// Create the clip plane shader object.
-	m_TranslateShader = new TranslateShaderClass;
-	if (!m_TranslateShader)
+	// Create the texture shader object.
+	m_TextureShader = new TextureShaderClass;
+	if (!m_TextureShader)
 	{
 		return false;
 	}
 
-	// Initialize the clip plane shader object.
-	result = m_TranslateShader->Initialize(m_D3D->GetDevice(), hwnd);
+	// Initialize the texture shader object.
+	result = m_TextureShader->Initialize(m_D3D->GetDevice(), hwnd);
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize the clip plane shader object.", L"Error", MB_OK);
+		MessageBox(hwnd, L"Could not initialize the texture shader object.", L"Error", MB_OK);
+		return false;
+	}
+
+	// Create the render to texture object.
+	m_RenderTexture = new RenderTextureClass;
+	if (!m_RenderTexture)
+	{
+		return false;
+	}
+
+	// Initialize the render to texture object.
+	result = m_RenderTexture->Initialize(m_D3D->GetDevice(), screenWidth, screenHeight);
+	if (!result)
+	{
+		return false;
+	}
+
+	// Create the first model object.
+	m_FloorModel = new ModelClass;
+	if (!m_FloorModel)
+	{
+		return false;
+	}
+
+	// Initialize the first model object.
+	result = m_FloorModel->Initialize(m_D3D->GetDevice(), L"../Engine/data/blue01.dds", "../Engine/data/floor.txt");
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the first model object.", L"Error", MB_OK);
+		return false;
+	}
+
+	// Create the reflection shader object.
+	m_ReflectionShader = new ReflectionShaderClass;
+	if (!m_ReflectionShader)
+	{
+		return false;
+	}
+
+	// Initialize the reflection shader object.
+	result = m_ReflectionShader->Initialize(m_D3D->GetDevice(), hwnd);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the reflection shader object.", L"Error", MB_OK);
 		return false;
 	}
 
@@ -86,12 +133,36 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 void GraphicsClass::Shutdown()
 {
-	// Release the clip plane shader object.
-	if (m_TranslateShader)
+	// Release the reflection shader object.
+	if (m_ReflectionShader)
 	{
-		m_TranslateShader->Shutdown();
-		delete m_TranslateShader;
-		m_TranslateShader = 0;
+		m_ReflectionShader->Shutdown();
+		delete m_ReflectionShader;
+		m_ReflectionShader = 0;
+	}
+
+	// Release the floor model object.
+	if (m_FloorModel)
+	{
+		m_FloorModel->Shutdown();
+		delete m_FloorModel;
+		m_FloorModel = 0;
+	}
+
+	// Release the render to texture object.
+	if (m_RenderTexture)
+	{
+		m_RenderTexture->Shutdown();
+		delete m_RenderTexture;
+		m_RenderTexture = 0;
+	}
+
+	// Release the texture shader object.
+	if (m_TextureShader)
+	{
+		m_TextureShader->Shutdown();
+		delete m_TextureShader;
+		m_TextureShader = 0;
 	}
 
 	// Release the model object.
@@ -131,16 +202,74 @@ bool GraphicsClass::Frame()
 
 bool GraphicsClass::Render()
 {
-	D3DXMATRIX worldMatrix, viewMatrix, projectionMatrix;
 	bool result;
-	static float textureTranslation = 0.0f;
 
-	// Increment the texture translation position.
-	textureTranslation += 0.01f;
-	if (textureTranslation > 1.0f)
+	// Render the entire scene as a reflection to the texture first.
+	result = RenderToTexture();
+	if (!result)
 	{
-		textureTranslation -= 1.0f;
+		return false;
 	}
+
+	// Render the scene as normal to the back buffer.
+	result = RenderScene();
+	if (!result)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool GraphicsClass::RenderToTexture()
+{
+	D3DXMATRIX worldMatrix, reflectionViewMatrix, projectionMatrix;
+	static float rotation = 0.0f;
+
+	// Set the render target to be the render to texture.
+	m_RenderTexture->SetRenderTarget(m_D3D->GetDeviceContext(), m_D3D->GetDepthStencilView());
+
+	// Clear the render to texture.
+	m_RenderTexture->ClearRenderTarget(m_D3D->GetDeviceContext(), m_D3D->GetDepthStencilView(), 0.0f, 0.0f, 0.0f, 1.0f);
+
+	// Use the camera to calculate the reflection matrix.
+	m_Camera->RenderReflection(-1.5f);
+
+	// Get the camera reflection view matrix instead of the normal view matrix.
+	reflectionViewMatrix = m_Camera->GetReflectionViewMatrix();
+
+	// Get the world and projection matrices.
+	m_D3D->GetWorldMatrix(worldMatrix);
+	m_D3D->GetProjectionMatrix(projectionMatrix);
+
+	// Update the rotation variable each frame.
+	rotation += (float)D3DX_PI * 0.005f;
+	if (rotation > 360.0f)
+	{
+		rotation -= 360.0f;
+	}
+	D3DXMatrixRotationY(&worldMatrix, rotation);
+
+	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	m_Model->Render(m_D3D->GetDeviceContext());
+
+	// Render the model using the texture shader and the reflection view matrix.
+	m_TextureShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, reflectionViewMatrix,
+		projectionMatrix, m_Model->GetTexture());
+
+	// Reset the render target back to the original back buffer and not the render to texture anymore.
+	m_D3D->SetBackBufferRenderTarget();
+
+
+	return true;
+}
+
+bool GraphicsClass::RenderScene()
+{
+	D3DXMATRIX worldMatrix, viewMatrix, projectionMatrix, reflectionMatrix;
+	bool result;
+	static float rotation = 0.0f;
+
 
 	// Clear the buffers to begin the scene.
 	m_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
@@ -153,16 +282,41 @@ bool GraphicsClass::Render()
 	m_Camera->GetViewMatrix(viewMatrix);
 	m_D3D->GetProjectionMatrix(projectionMatrix);
 
+	// Update the rotation variable each frame.
+	rotation += (float)D3DX_PI * 0.005f;
+	if (rotation > 360.0f)
+	{
+		rotation -= 360.0f;
+	}
+
+	// Multiply the world matrix by the rotation.
+	D3DXMatrixRotationY(&worldMatrix, rotation);
+
 	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
 	m_Model->Render(m_D3D->GetDeviceContext());
 
-	// Render the model with the clip plane shader.
-	result = m_TranslateShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix,
-		projectionMatrix, m_Model->GetTexture(), textureTranslation);
+	// Render the model with the texture shader.
+	result = m_TextureShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix,
+		projectionMatrix, m_Model->GetTexture());
 	if (!result)
 	{
 		return false;
 	}
+
+	// Get the world matrix again and translate down for the floor model to render underneath the cube.
+	m_D3D->GetWorldMatrix(worldMatrix);
+	D3DXMatrixTranslation(&worldMatrix, 0.0f, -1.5f, 0.0f);
+
+	// Get the camera reflection view matrix.
+	reflectionMatrix = m_Camera->GetReflectionViewMatrix();
+
+	// Put the floor model vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	m_FloorModel->Render(m_D3D->GetDeviceContext());
+
+	// Render the floor model using the reflection shader, reflection texture, and reflection view matrix.
+	result = m_ReflectionShader->Render(m_D3D->GetDeviceContext(), m_FloorModel->GetIndexCount(), worldMatrix, viewMatrix,
+		projectionMatrix, m_FloorModel->GetTexture(), m_RenderTexture->GetShaderResourceView(),
+		reflectionMatrix);
 
 	// Present the rendered scene to the screen.
 	m_D3D->EndScene();
