@@ -59,12 +59,14 @@ public:
 	ModelClass(const ModelClass&);
 	~ModelClass();
 
+	bool Initialize(ID3D11Device*, WCHAR*, char*);
 	bool Initialize(ID3D11Device*, char*, WCHAR*, WCHAR*, WCHAR*);
 	void Shutdown();
 	void Render(ID3D11DeviceContext*);
 
 	int GetIndexCount();
 	ID3D11ShaderResourceView** GetTextureArray();
+	ID3D11ShaderResourceView* GetTexture();
 
 private:
 	bool InitializeBuffers(ID3D11Device*);
