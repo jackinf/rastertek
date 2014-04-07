@@ -4,16 +4,20 @@
 
 
 /////////////
+// DEFINES //
+/////////////
+#define NUM_LIGHTS 5
+
+
+/////////////
 // GLOBALS //
 /////////////
 Texture2D shaderTexture;
 SamplerState SampleType;
 
-cbuffer LightBuffer
+cbuffer LightColorBuffer
 {
-	float4 ambientColor;
-	float4 diffuseColor;
-	float3 lightDirection;
+	float4 diffuseColor[NUM_LIGHTS];
 };
 
 
@@ -25,8 +29,12 @@ struct PixelInputType
 	float4 position : SV_POSITION;
 	float2 tex : TEXCOORD0;
 	float3 normal : NORMAL;
+	float3 lightPos1 : TEXCOORD1;
+	float3 lightPos2 : TEXCOORD2;
+	float3 lightPos3 : TEXCOORD3;
+	float3 lightPos4 : TEXCOORD4;
+	float3 lightPos5 : TEXCOORD5;
 };
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // Pixel Shader
@@ -34,34 +42,28 @@ struct PixelInputType
 float4 LightPixelShader(PixelInputType input) : SV_TARGET
 {
 	float4 textureColor;
-	float3 lightDir;
-	float lightIntensity;
-	float4 color;
+	float lightIntensity1, lightIntensity2, lightIntensity3, lightIntensity4, lightIntensity5;
+	float4 color, color1, color2, color3, color4, color5;
 
+	// Calculate the different amounts of light on this pixel based on the positions of the lights.
+	lightIntensity1 = saturate(dot(input.normal, input.lightPos1));
+	lightIntensity2 = saturate(dot(input.normal, input.lightPos2));
+	lightIntensity3 = saturate(dot(input.normal, input.lightPos3));
+	lightIntensity4 = saturate(dot(input.normal, input.lightPos4));
+	lightIntensity5 = saturate(dot(input.normal, input.lightPos5));
+
+	// Determine the diffuse color amount of each of the four lights.
+	color1 = diffuseColor[0] * lightIntensity1;
+	color2 = diffuseColor[1] * lightIntensity2;
+	color3 = diffuseColor[2] * lightIntensity3;
+	color4 = diffuseColor[3] * lightIntensity4;
+	color5 = diffuseColor[4] * lightIntensity5;
 
 	// Sample the texture pixel at this location.
 	textureColor = shaderTexture.Sample(SampleType, input.tex);
 
-	// Set the default output color to the ambient light value for all pixels.
-	color = ambientColor;
-
-	// Invert the light direction for calculations.
-	lightDir = -lightDirection;
-
-	// Calculate the amount of light on this pixel.
-	lightIntensity = saturate(dot(input.normal, lightDir));
-
-	if (lightIntensity > 0.0f)
-	{
-		// Determine the final diffuse color based on the diffuse color and the amount of light intensity.
-		color += (diffuseColor * lightIntensity);
-	}
-
-	// Saturate the final light color.
-	color = saturate(color);
-
-	// Multiply the texture pixel and the input color to get the final result.
-	color = color * textureColor;
+	// Multiply the texture pixel by the combination of all four light colors to get the final result.
+	color = saturate(color1 + color2 + color3 + color4 + color5) * textureColor;
 
 	return color;
 }

@@ -61,6 +61,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "data", "data", "{2927A905-F
 		Engine\data\light01.dds = Engine\data\light01.dds
 		Engine\data\marble01.dds = Engine\data\marble01.dds
 		Engine\data\mousepointer.dds = Engine\data\mousepointer.dds
+		Engine\data\plane01.txt = Engine\data\plane01.txt
 		Engine\data\sound01.wav = Engine\data\sound01.wav
 		Engine\data\sound02.wav = Engine\data\sound02.wav
 		Engine\data\spec02.dds = Engine\data\spec02.dds
