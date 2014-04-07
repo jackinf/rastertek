@@ -18,6 +18,7 @@ cbuffer ReflectionBuffer
 	matrix reflectionMatrix;
 };
 
+
 //////////////
 // TYPEDEFS //
 //////////////
@@ -34,6 +35,7 @@ struct PixelInputType
 	float4 reflectionPosition : TEXCOORD1;
 	float4 refractionPosition : TEXCOORD2;
 };
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Vertex Shader

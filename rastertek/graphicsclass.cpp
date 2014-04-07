@@ -449,4 +449,88 @@ bool GraphicsClass::RenderReflectionToTexture()
 	return true;
 }
 
-// TODO: Continue from here...
+bool GraphicsClass::RenderScene()
+{
+	D3DXMATRIX worldMatrix, viewMatrix, projectionMatrix, reflectionMatrix;
+	bool result;
+
+	m_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
+
+	m_Camera->Render();
+
+	// Get the world, view, and projection matrices from the camera and d3d objects.
+	m_D3D->GetWorldMatrix(worldMatrix);
+	m_Camera->GetViewMatrix(viewMatrix);
+	m_D3D->GetProjectionMatrix(projectionMatrix);
+
+	//************//
+	// GROUND	  //
+	//************//
+
+	// Translate to where the ground model will be rendered.
+	D3DXMatrixTranslation(&worldMatrix, 0.0f, 1.0f, 0.0f);
+
+	// Put the ground model vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	m_GroundModel->Render(m_D3D->GetDeviceContext());
+
+	// Render the ground model using the light shader.
+	result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_GroundModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+		m_GroundModel->GetTexture(), m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor());
+	if (!result)
+	{
+		return false;
+	}
+
+	// Reset the world matrix.
+	m_D3D->GetWorldMatrix(worldMatrix);
+
+	//************//
+	// WALL		  //
+	//************//
+
+	D3DXMatrixTranslation(&worldMatrix, 0.0f, 6.0f, 8.0f);
+	m_WallModel->Render(m_D3D->GetDeviceContext());
+	result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_WallModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+		m_WallModel->GetTexture(), m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor());
+	if (!result)
+		return false;
+
+	// Reset the world matrix.
+	m_D3D->GetWorldMatrix(worldMatrix);
+
+	//************//
+	// BATH		  //
+	//************//
+
+	D3DXMatrixTranslation(&worldMatrix, 0.0f, 2.0f, 0.0f);
+	m_BathModel->Render(m_D3D->GetDeviceContext());
+	result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_BathModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+		m_BathModel->GetTexture(), m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor());
+	if (!result)
+		return false;
+
+	// Reset the world matrix.
+	m_D3D->GetWorldMatrix(worldMatrix);
+
+	//************//
+	// WATER	  //
+	//************//
+
+	// Get the camera reflection view matrix.
+	reflectionMatrix = m_Camera->GetReflectionViewMatrix();
+
+	// Translate to where the water model will be rendered.
+	D3DXMatrixTranslation(&worldMatrix, 0.0f, m_waterHeight, 0.0f);
+
+	// Put the water model vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	m_WaterModel->Render(m_D3D->GetDeviceContext());
+
+	result = m_WaterShader->Render(m_D3D->GetDeviceContext(), m_WaterModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, reflectionMatrix,
+		m_ReflectionTexture->GetShaderResourceView(), m_RefractionTexture->GetShaderResourceView(), m_WaterModel->GetTexture(), m_waterTranslation, 0.01f);
+	if (!result)
+		return false;
+
+	m_D3D->EndScene();
+
+	return true;
+}

@@ -48,6 +48,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "data", "data", "{2927A905-F357-4689-BF90-A96F48BA0778}"
 	ProjectSection(SolutionItems) = preProject
 		Engine\data\alpha01.dds = Engine\data\alpha01.dds
+		Engine\data\bath.txt = Engine\data\bath.txt
 		Engine\data\blue01.dds = Engine\data\blue01.dds
 		Engine\data\bump01.dds = Engine\data\bump01.dds
 		Engine\data\bump02.dds = Engine\data\bump02.dds
@@ -55,7 +56,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "data", "data", "{2927A905-F
 		Engine\data\floor.txt = Engine\data\floor.txt
 		Engine\data\font.dds = Engine\data\font.dds
 		Engine\data\fontdata.txt = Engine\data\fontdata.txt
+		Engine\data\ground.txt = Engine\data\ground.txt
+		Engine\data\ground01.dds = Engine\data\ground01.dds
 		Engine\data\light01.dds = Engine\data\light01.dds
+		Engine\data\marble01.dds = Engine\data\marble01.dds
 		Engine\data\mousepointer.dds = Engine\data\mousepointer.dds
 		Engine\data\sound01.wav = Engine\data\sound01.wav
 		Engine\data\sound02.wav = Engine\data\sound02.wav
@@ -63,6 +67,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "data", "data", "{2927A905-F
 		Engine\data\sphere.txt = Engine\data\sphere.txt
 		Engine\data\stone02.dds = Engine\data\stone02.dds
 		Engine\data\triangle.txt = Engine\data\triangle.txt
+		Engine\data\wall.txt = Engine\data\wall.txt
+		Engine\data\wall01.dds = Engine\data\wall01.dds
+		Engine\data\water.txt = Engine\data\water.txt
+		Engine\data\water01.dds = Engine\data\water01.dds
 	EndProjectSection
 EndProject
 Global
