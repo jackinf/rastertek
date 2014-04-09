@@ -10,6 +10,7 @@ SystemClass::SystemClass()
 	m_Graphics = 0;
 	m_Timer = 0;
 	m_Position = 0;
+	m_Sound = 0;
 }
 
 
@@ -83,6 +84,19 @@ bool SystemClass::Initialize()
 	m_Position = new PositionClass;
 	if (!m_Position)
 	{
+		return false;
+	}
+
+	m_Sound = new SoundClass;
+	if (!m_Sound)
+	{
+		return false;
+	}
+
+	result = m_Sound->Initialize(m_hwnd);
+	if (!result)
+	{
+		MessageBox(m_hwnd, L"Could not initialize the Sound object.", L"Error", MB_OK);
 		return false;
 	}
 

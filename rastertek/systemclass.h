@@ -24,6 +24,7 @@
 #include "graphicsclass.h"
 #include "timerclass.h"
 #include "positionclass.h"
+#include "soundclass.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: SystemClass
@@ -55,6 +56,7 @@ private:
 	GraphicsClass* m_Graphics;
 	TimerClass* m_Timer;
 	PositionClass* m_Position;
+	SoundClass* m_Sound;
 };
 
 

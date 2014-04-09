@@ -366,4 +366,9 @@
       <Filter>Engine</Filter>
     </Text>
   </ItemGroup>
+  <ItemGroup>
+    <Media Include="..\Engine\data\sound02.wav">
+      <Filter>Engine</Filter>
+    </Media>
+  </ItemGroup>
 </Project>
