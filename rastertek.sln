@@ -50,6 +50,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "data", "data", "{2927A905-F357-4689-BF90-A96F48BA0778}"
 	ProjectSection(SolutionItems) = preProject
 		Engine\data\alpha01.dds = Engine\data\alpha01.dds
+		Engine\data\alpha02.dds = Engine\data\alpha02.dds
 		Engine\data\bath.txt = Engine\data\bath.txt
 		Engine\data\blue01.dds = Engine\data\blue01.dds
 		Engine\data\bump01.dds = Engine\data\bump01.dds

@@ -59,7 +59,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	// Initialize the model object.
 	result = m_Model->Initialize(m_D3D->GetDevice(), "../Engine/data/square.txt", L"../Engine/data/fire01.dds",
-		L"../Engine/data/noise01.dds", L"../Engine/data/alpha01.dds");
+		L"../Engine/data/noise01.dds", L"../Engine/data/alpha02.dds");
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
