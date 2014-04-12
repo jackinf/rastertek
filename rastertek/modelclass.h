@@ -60,6 +60,7 @@ public:
 	~ModelClass();
 
 	bool Initialize(ID3D11Device*, WCHAR*, char*);
+	bool Initialize(ID3D11Device*, char*, WCHAR*, WCHAR*);
 	bool Initialize(ID3D11Device*, char*, WCHAR*, WCHAR*, WCHAR*);
 	void Shutdown();
 	void Render(ID3D11DeviceContext*);
@@ -67,6 +68,7 @@ public:
 	int GetIndexCount();
 	ID3D11ShaderResourceView** GetTextureArray();
 	ID3D11ShaderResourceView* GetTexture();
+	ID3D11ShaderResourceView* GetNormalMap();
 
 private:
 	bool InitializeBuffers(ID3D11Device*);

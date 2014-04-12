@@ -19,6 +19,33 @@ ModelClass::~ModelClass()
 {
 }
 
+bool ModelClass::Initialize(ID3D11Device* device, char* modelFilename, WCHAR* textureFilename1, WCHAR* textureFilename2)
+{
+	bool result;
+
+	// Load in the model data,
+	result = LoadModel(modelFilename);
+	if (!result)
+	{
+		return false;
+	}
+
+	// Initialize the vertex and index buffers.
+	result = InitializeBuffers(device);
+	if (!result)
+	{
+		return false;
+	}
+
+	// Load the texture for this model.
+	result = LoadTextures(device, textureFilename1, textureFilename2, textureFilename2);
+	if (!result)
+	{
+		return false;
+	}
+
+}
+
 bool ModelClass::Initialize(ID3D11Device* device, WCHAR* textureFilename, char* modelFilename)
 {
 	bool result;
@@ -110,6 +137,11 @@ ID3D11ShaderResourceView** ModelClass::GetTextureArray()
 ID3D11ShaderResourceView* ModelClass::GetTexture()
 {
 	return m_TextureArray->GetTextureArray()[0];
+}
+
+ID3D11ShaderResourceView* ModelClass::GetNormalMap()
+{
+	return m_TextureArray->GetTextureArray()[1];
 }
 
 int ModelClass::GetIndexCount()

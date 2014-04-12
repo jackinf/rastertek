@@ -12,12 +12,11 @@ Texture2D colorTexture : register(t0);
 Texture2D normalTexture : register(t1);
 Texture2D refractionTexture : register(t2);
 
-struct GlassBuffer
+cbuffer GlassBuffer
 {
 	float refractionScale;
 	float3 padding;
 };
-
 
 //////////////
 // TYPEDEFS //

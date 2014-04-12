@@ -76,7 +76,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Initialize the window model object.
-	result = m_WindowModel->Initialize(m_D3D->GetDevice(), "../Engine/data/square.txt", L"../Engine/data/glass01.dds", L"../Engine/data/bump03.dds");
+	result = m_WindowModel->Initialize(m_D3D->GetDevice(), "../Engine/data/square.txt", L"../Engine/data/ice01.dds", L"../Engine/data/icebump01.dds");
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the window model object.", L"Error", MB_OK);
@@ -200,14 +200,14 @@ bool GraphicsClass::Frame()
 	bool result;
 
 	// Update the rotation variable each frame.
-	rotation += (float)D3DX_PI * 0.005f;
+	rotation += (float)D3DX_PI * 0.0005f;
 	if (rotation > 360.0f)
 	{
 		rotation -= 360.0f;
 	}
 
 	// Set the position of the camera.
-	m_Camera->SetPosition(0.0f, 0.0f, -10.0f);
+	m_Camera->SetPosition(0.0f, 0.0f, -5.0f);
 
 	// Render the scene to texture first.
 	result = RenderToTexture(rotation);
@@ -228,14 +228,96 @@ bool GraphicsClass::Frame()
 
 bool GraphicsClass::RenderToTexture(float rotation)
 {
-	// TODO: write code
+	D3DXMATRIX worldMatrix, viewMatrix, projectionMatrix;
+	bool result;
+
+	// Set the render target to be the render to texture.
+	m_RenderTexture->SetRenderTarget(m_D3D->GetDeviceContext(), m_D3D->GetDepthStencilView());
+
+	// Clear the render to texture.
+	m_RenderTexture->ClearRenderTarget(m_D3D->GetDeviceContext(), m_D3D->GetDepthStencilView(), 0.0f, 0.0f, 0.0f, 1.0f);
+
+	// Generate the view matrix based on the camera's position.
+	m_Camera->Render();
+
+	// Get the world, view, and projection matrices from the camera and d3d objects.
+	m_D3D->GetWorldMatrix(worldMatrix);
+	m_Camera->GetViewMatrix(viewMatrix);
+	m_D3D->GetProjectionMatrix(projectionMatrix);
+
+	// Multiply the world matrix by the rotation.
+	D3DXMatrixRotationY(&worldMatrix, rotation);
+
+	// Put the cube model vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	m_Model->Render(m_D3D->GetDeviceContext());
+
+	// Render the cube model using the texture shader.
+	result = m_TextureShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, m_Model->GetTexture());
+	if (!result)
+	{
+		return false;
+	}
+
+	// Reset the render target back to the original back buffer and not the render to texture anymore.
+	m_D3D->SetBackBufferRenderTarget();
 
 	return true;
 }
 
 bool GraphicsClass::Render(float rotation)
 {
-	// TODO: write code
+	D3DXMATRIX worldMatrix, viewMatrix, projectionMatrix;
+	float refractionScale;
+	bool result;
+
+	// Set the refraction scale for the glass shader.
+	refractionScale = 0.1f;
+
+	// Clear the buffers to begin the scene.
+	m_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
+
+	// Generate the view matrix based on the camera's position.
+	m_Camera->Render();
+
+	// Get the world, view, and projection matrices from the camera and d3d objects.
+	m_D3D->GetWorldMatrix(worldMatrix);
+	m_Camera->GetViewMatrix(viewMatrix);
+	m_D3D->GetProjectionMatrix(projectionMatrix);
+
+	// Multiply the world matrix by the rotation.
+	D3DXMatrixRotationY(&worldMatrix, rotation);
+
+	// Put the cube model vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	m_Model->Render(m_D3D->GetDeviceContext());
+
+	// Render the cube model using the texture shader.
+	result = m_TextureShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+		m_Model->GetTexture());
+	if (!result)
+	{
+		return false;
+	}
+
+	// Reset the world matrix.
+	m_D3D->GetWorldMatrix(worldMatrix);
+
+	// Translate to back where the window model will be rendered.
+	D3DXMatrixTranslation(&worldMatrix, 0.0f, 0.0f, -1.5f);
+
+	// Put the window model vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	m_WindowModel->Render(m_D3D->GetDeviceContext());
+
+	// Render the window model using the glass shader.
+	result = m_GlassShader->Render(m_D3D->GetDeviceContext(), m_WindowModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+		m_WindowModel->GetTexture(), m_WindowModel->GetNormalMap(), m_RenderTexture->GetShaderResourceView(),
+		refractionScale);
+	if (!result)
+	{
+		return false;
+	}
+
+	// Present the rendered scene to the screen.
+	m_D3D->EndScene();
 
 	return true;
 }
