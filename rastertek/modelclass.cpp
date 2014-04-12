@@ -139,6 +139,21 @@ ID3D11ShaderResourceView* ModelClass::GetTexture()
 	return m_TextureArray->GetTextureArray()[0];
 }
 
+ID3D11ShaderResourceView* ModelClass::GetTexture1()
+{
+	return m_TextureArray->GetTextureArray()[0];
+}
+
+ID3D11ShaderResourceView* ModelClass::GetTexture2()
+{
+	return m_TextureArray->GetTextureArray()[1];
+}
+
+ID3D11ShaderResourceView* ModelClass::GetTexture3()
+{
+	return m_TextureArray->GetTextureArray()[2];
+}
+
 ID3D11ShaderResourceView* ModelClass::GetNormalMap()
 {
 	return m_TextureArray->GetTextureArray()[1];

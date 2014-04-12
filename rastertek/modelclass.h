@@ -68,6 +68,9 @@ public:
 	int GetIndexCount();
 	ID3D11ShaderResourceView** GetTextureArray();
 	ID3D11ShaderResourceView* GetTexture();
+	ID3D11ShaderResourceView* GetTexture1();
+	ID3D11ShaderResourceView* GetTexture2();
+	ID3D11ShaderResourceView* GetTexture3();
 	ID3D11ShaderResourceView* GetNormalMap();
 
 private:

@@ -138,6 +138,9 @@
     <ClCompile Include="glassshaderclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="fireshaderclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="systemclass.h">
@@ -257,6 +260,9 @@
     <ClInclude Include="glassshaderclass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="fireshaderclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="pscolor.hlsl">
@@ -353,6 +359,12 @@
       <Filter>Engine</Filter>
     </FxCompile>
     <FxCompile Include="..\Engine\glassvs.hlsl">
+      <Filter>Engine</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Engine\firevs.hlsl">
+      <Filter>Engine</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Engine\fireps.hlsl">
       <Filter>Engine</Filter>
     </FxCompile>
   </ItemGroup>

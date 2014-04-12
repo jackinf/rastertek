@@ -20,9 +20,7 @@ const float SCREEN_NEAR = 0.1f;
 #include "d3dclass.h"
 #include "cameraclass.h"
 #include "modelclass.h"
-#include "rendertextureclass.h"
-#include "textureshaderclass.h"
-#include "glassshaderclass.h"
+#include "fireshaderclass.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: GraphicsClass
@@ -39,17 +37,14 @@ public:
 	bool Frame();
 
 private:
-	bool Render(float);
+	bool Render();
 	bool RenderToTexture(float);
 
 private:
 	D3DClass* m_D3D;
 	CameraClass* m_Camera;
 	ModelClass* m_Model;
-	ModelClass* m_WindowModel;
-	RenderTextureClass* m_RenderTexture;
-	TextureShaderClass* m_TextureShader;
-	GlassShaderClass* m_GlassShader;
+	FireShaderClass* m_FireShader;
 };
 
 #endif
