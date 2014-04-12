@@ -60,6 +60,7 @@ public:
 	~ModelClass();
 
 	bool Initialize(ID3D11Device*, WCHAR*, char*);
+	bool Initialize(ID3D11Device*, char*, WCHAR*);
 	bool Initialize(ID3D11Device*, char*, WCHAR*, WCHAR*);
 	bool Initialize(ID3D11Device*, char*, WCHAR*, WCHAR*, WCHAR*);
 	void Shutdown();

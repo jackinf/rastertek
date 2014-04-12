@@ -19,6 +19,7 @@ const float SCREEN_NEAR = 0.1f;
 ///////////////////////
 #include "d3dclass.h"
 #include "cameraclass.h"
+#include "textureshaderclass.h"
 #include "modelclass.h"
 #include "fireshaderclass.h"
 
@@ -34,7 +35,7 @@ public:
 
 	bool Initialize(int, int, HWND);
 	void Shutdown();
-	bool Frame();
+	bool Frame(float, float, float);
 
 private:
 	bool Render();
@@ -43,8 +44,8 @@ private:
 private:
 	D3DClass* m_D3D;
 	CameraClass* m_Camera;
-	ModelClass* m_Model;
-	FireShaderClass* m_FireShader;
+	TextureShaderClass* m_TextureShader;
+	ModelClass *m_FloorModel, *m_BillboardModel;
 };
 
 #endif

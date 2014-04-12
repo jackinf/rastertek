@@ -19,6 +19,33 @@ ModelClass::~ModelClass()
 {
 }
 
+bool ModelClass::Initialize(ID3D11Device* device, char* modelFilename, WCHAR* textureFilename1)
+{
+	bool result;
+
+	// Load in the model data,
+	result = LoadModel(modelFilename);
+	if (!result)
+	{
+		return false;
+	}
+
+	// Initialize the vertex and index buffers.
+	result = InitializeBuffers(device);
+	if (!result)
+	{
+		return false;
+	}
+
+	// Load the texture for this model.
+	result = LoadTextures(device, textureFilename1, textureFilename1, textureFilename1);
+	if (!result)
+	{
+		return false;
+	}
+
+}
+
 bool ModelClass::Initialize(ID3D11Device* device, char* modelFilename, WCHAR* textureFilename1, WCHAR* textureFilename2)
 {
 	bool result;
