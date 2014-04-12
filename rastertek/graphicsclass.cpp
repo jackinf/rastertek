@@ -8,9 +8,8 @@ GraphicsClass::GraphicsClass()
 {
 	m_D3D = 0;
 	m_Camera = 0;
-	m_TextureShader = 0;
-	m_FloorModel = 0;
-	m_BillboardModel = 0;
+	m_Model = 0;
+	m_DepthShader = 0;
 }
 
 
@@ -51,50 +50,39 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
-	// Create the texture shader object.
-	m_TextureShader = new TextureShaderClass;
-	if (!m_TextureShader)
-	{
-		return false;
-	}
-
-	// Initialize the texture shader object.
-	result = m_TextureShader->Initialize(m_D3D->GetDevice(), hwnd);
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize the texture shader object.", L"Error", MB_OK);
-		return false;
-	}
+	// Set the initial position of the camera.
+	m_Camera->SetPosition(0.0f, 2.0f, -10.0f);
 
 	// Create the model object.
-	m_FloorModel = new ModelClass;
-	if (!m_FloorModel)
+	m_Model = new ModelClass;
+	if (!m_Model)
 	{
 		return false;
 	}
 
 	// Initialize the model object.
-	result = m_FloorModel->Initialize(m_D3D->GetDevice(), "../Engine/data/floor.txt", L"../Engine/data/grid01.dds");
+	result = m_Model->Initialize(m_D3D->GetDevice(), "../Engine/data/floor.txt");
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
 		return false;
 	}
 
-	// Create the billboard model object.
-	m_BillboardModel = new ModelClass;
-	if (!m_BillboardModel)
+	// Create the depth shader object.
+	m_DepthShader = new DepthShaderClass;
+	if (!m_DepthShader)
 	{
 		return false;
 	}
 
-	// Initialize the billboard model object.
-	result = m_BillboardModel->Initialize(m_D3D->GetDevice(), "../Engine/data/square.txt", L"../Engine/data/seafloor.dds");
+	// Initialize the depth shader object.
+	result = m_DepthShader->Initialize(m_D3D->GetDevice(), hwnd);
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize the billboard model object.", L"Error", MB_OK);
+		MessageBox(hwnd, L"Could not initialize the depth shader object.", L"Error", MB_OK);
 		return false;
 	}
+
 
 	return true;
 }
@@ -102,20 +90,20 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 void GraphicsClass::Shutdown()
 {
-	// Release the billboard model object.
-	if (m_BillboardModel)
+	// Release the depth shader object.
+	if (m_DepthShader)
 	{
-		m_BillboardModel->Shutdown();
-		delete m_BillboardModel;
-		m_BillboardModel = 0;
+		m_DepthShader->Shutdown();
+		delete m_DepthShader;
+		m_DepthShader = 0;
 	}
 
-	// Release the floor model object.
-	if (m_FloorModel)
+	// Release the model object.
+	if (m_Model)
 	{
-		m_FloorModel->Shutdown();
-		delete m_FloorModel;
-		m_FloorModel = 0;
+		m_Model->Shutdown();
+		delete m_Model;
+		m_Model = 0;
 	}
 
 	// Release the camera object.
@@ -157,11 +145,9 @@ bool GraphicsClass::Frame(float positionX, float positionY, float positionZ)
 
 bool GraphicsClass::Render()
 {
-	D3DXMATRIX worldMatrix, viewMatrix, projectionMatrix, translateMatrix;
+	D3DXMATRIX worldMatrix, viewMatrix, projectionMatrix;
 	bool result;
-	D3DXVECTOR3 cameraPosition, modelPosition;
-	double angle;
-	float rotation;
+
 
 	// Clear the buffers to begin the scene.
 	m_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
@@ -174,46 +160,11 @@ bool GraphicsClass::Render()
 	m_D3D->GetWorldMatrix(worldMatrix);
 	m_D3D->GetProjectionMatrix(projectionMatrix);
 
-	// Put the floor model vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	m_FloorModel->Render(m_D3D->GetDeviceContext());
-
-	// Render the floor model using the texture shader.
-	result = m_TextureShader->Render(m_D3D->GetDeviceContext(), m_FloorModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-		m_FloorModel->GetTexture());
-	if (!result)
-	{
-		return false;
-	}
-
-	// Get the position of the camera.
-	cameraPosition = m_Camera->GetPosition();
-
-	// Set the position of the billboard model.
-	modelPosition.x = 0.0f;
-	modelPosition.y = 1.5f;
-	modelPosition.z = 0.0f;
-
-	// Calculate the rotation that needs to be applied to the billboard model to face the current camera position using the arc tangent function.
-	angle = atan2(modelPosition.x - cameraPosition.x, modelPosition.z - cameraPosition.z) * (180.0 / D3DX_PI);
-
-	// Convert rotation into radians.
-	rotation = (float)angle * 0.0174532925f;
-
-	// Setup the rotation the billboard at the origin using the world matrix.
-	D3DXMatrixRotationY(&worldMatrix, rotation);
-
-	// Setup the translation matrix from the billboard model.
-	D3DXMatrixTranslation(&translateMatrix, modelPosition.x, modelPosition.y, modelPosition.z);
-
-	// Finally combine the rotation and translation matrices to create the final world matrix for the billboard model.
-	D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
-
 	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	m_BillboardModel->Render(m_D3D->GetDeviceContext());
+	m_Model->Render(m_D3D->GetDeviceContext());
 
-	// Render the model using the texture shader.
-	result = m_TextureShader->Render(m_D3D->GetDeviceContext(), m_BillboardModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-		m_BillboardModel->GetTexture());
+	// Render the model using the depth shader.
+	result = m_DepthShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix);
 	if (!result)
 	{
 		return false;
@@ -221,7 +172,6 @@ bool GraphicsClass::Render()
 
 	// Present the rendered scene to the screen.
 	m_D3D->EndScene();
-
 
 	return true;
 }

@@ -141,6 +141,9 @@
     <ClCompile Include="fireshaderclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="depthshaderclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="systemclass.h">
@@ -263,6 +266,9 @@
     <ClInclude Include="fireshaderclass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="depthshaderclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="pscolor.hlsl">
@@ -365,6 +371,12 @@
       <Filter>Engine</Filter>
     </FxCompile>
     <FxCompile Include="..\Engine\fireps.hlsl">
+      <Filter>Engine</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Engine\depthps.hlsl">
+      <Filter>Engine</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Engine\depthvs.hlsl">
       <Filter>Engine</Filter>
     </FxCompile>
   </ItemGroup>

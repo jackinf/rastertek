@@ -87,6 +87,7 @@
     <ClCompile Include="cpuclass.cpp" />
     <ClCompile Include="d3dclass.cpp" />
     <ClCompile Include="debugwindowclass.cpp" />
+    <ClCompile Include="depthshaderclass.cpp" />
     <ClCompile Include="fadeshaderclass.cpp" />
     <ClCompile Include="fireshaderclass.cpp" />
     <ClCompile Include="fogshaderclass.cpp" />
@@ -130,6 +131,7 @@
     <ClInclude Include="cpuclass.h" />
     <ClInclude Include="d3dclass.h" />
     <ClInclude Include="debugwindowclass.h" />
+    <ClInclude Include="depthshaderclass.h" />
     <ClInclude Include="fadeshaderclass.h" />
     <ClInclude Include="fireshaderclass.h" />
     <ClInclude Include="fogshaderclass.h" />
@@ -188,6 +190,14 @@
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ClipPlaneVertexShader</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="..\Engine\depthps.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">DepthPixelShader</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="..\Engine\depthvs.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">DepthVertexShader</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
     </FxCompile>
     <FxCompile Include="..\Engine\fadeps.hlsl">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">FadePixelShader</EntryPointName>

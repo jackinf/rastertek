@@ -10,8 +10,8 @@
 /////////////
 const bool FULL_SCREEN = false;
 const bool VSYNC_ENABLED = false;
-const float SCREEN_DEPTH = 1000.0f;
-const float SCREEN_NEAR = 0.1f;
+const float SCREEN_DEPTH = 100.0f;
+const float SCREEN_NEAR = 1.0f;
 
 
 ///////////////////////
@@ -19,9 +19,8 @@ const float SCREEN_NEAR = 0.1f;
 ///////////////////////
 #include "d3dclass.h"
 #include "cameraclass.h"
-#include "textureshaderclass.h"
 #include "modelclass.h"
-#include "fireshaderclass.h"
+#include "depthshaderclass.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: GraphicsClass
@@ -44,8 +43,8 @@ private:
 private:
 	D3DClass* m_D3D;
 	CameraClass* m_Camera;
-	TextureShaderClass* m_TextureShader;
-	ModelClass *m_FloorModel, *m_BillboardModel;
+	ModelClass* m_Model;
+	DepthShaderClass* m_DepthShader;
 };
 
 #endif
