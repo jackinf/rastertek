@@ -153,6 +153,12 @@
     <ClCompile Include="orthowindowclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="particlesystemclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="particleshaderclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="systemclass.h">
@@ -287,6 +293,12 @@
     <ClInclude Include="orthowindowclass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="particlesystemclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="particleshaderclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="pscolor.hlsl">
@@ -409,6 +421,12 @@
     <FxCompile Include="..\Engine\verticalblurvs.hlsl">
       <Filter>Engine</Filter>
     </FxCompile>
+    <FxCompile Include="..\Engine\particleps.hlsl">
+      <Filter>Engine</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Engine\particlevs.hlsl">
+      <Filter>Engine</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\Engine\data\stone01.dds">
@@ -424,6 +442,9 @@
       <Filter>Engine</Filter>
     </Image>
     <Image Include="..\Engine\data\spec02.dds">
+      <Filter>Engine</Filter>
+    </Image>
+    <Image Include="..\Engine\data\star.dds">
       <Filter>Engine</Filter>
     </Image>
   </ItemGroup>

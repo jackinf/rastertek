@@ -19,12 +19,8 @@ const float SCREEN_NEAR = 0.1f;
 ///////////////////////
 #include "d3dclass.h"
 #include "cameraclass.h"
-#include "modelclass.h"
-#include "textureshaderclass.h"
-#include "horizontalblurshaderclass.h"
-#include "verticalblurshaderclass.h"
-#include "rendertextureclass.h"
-#include "orthowindowclass.h"
+#include "particleshaderclass.h"
+#include "particlesystemclass.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: GraphicsClass
@@ -38,26 +34,16 @@ public:
 
 	bool Initialize(int, int, HWND);
 	void Shutdown();
-	bool Frame();
+	bool Frame(float);
 
 private:
-	bool Render(float);
-	bool RenderSceneToTexture(float);
-	bool DownSampleTexture();
-	bool RenderHorizontalBlurToTexture();
-	bool RenderVerticalBlurToTexture();
-	bool UpSampleTexture();
-	bool Render2DTextureScene();
+	bool Render();
 
 private:
 	D3DClass* m_D3D;
 	CameraClass* m_Camera;
-	ModelClass* m_Model;
-	TextureShaderClass* m_TextureShader;
-	HorizontalBlurShaderClass* m_HorizontalBlurShader;
-	VerticalBlurShaderClass* m_VerticalBlurShader;
-	RenderTextureClass *m_RenderTexture, *m_DownSampleTexure, *m_HorizontalBlurTexture, *m_VerticalBlurTexture, *m_UpSampleTexure;
-	OrthoWindowClass *m_SmallWindow, *m_FullScreenWindow;
+	ParticleShaderClass* m_ParticleShader;
+	ParticleSystemClass* m_ParticleSystem;
 };
 
 #endif

@@ -107,6 +107,8 @@
     <ClCompile Include="modellistclass.cpp" />
     <ClCompile Include="multitextureshaderclass.cpp" />
     <ClCompile Include="orthowindowclass.cpp" />
+    <ClCompile Include="particleshaderclass.cpp" />
+    <ClCompile Include="particlesystemclass.cpp" />
     <ClCompile Include="positionclass.cpp" />
     <ClCompile Include="reflectionshaderclass.cpp" />
     <ClCompile Include="refractionshaderclass.cpp" />
@@ -153,6 +155,8 @@
     <ClInclude Include="modellistclass.h" />
     <ClInclude Include="multitextureshaderclass.h" />
     <ClInclude Include="orthowindowclass.h" />
+    <ClInclude Include="particleshaderclass.h" />
+    <ClInclude Include="particlesystemclass.h" />
     <ClInclude Include="positionclass.h" />
     <ClInclude Include="reflectionshaderclass.h" />
     <ClInclude Include="refractionshaderclass.h" />
@@ -269,6 +273,14 @@
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">MultiTextureVertexShader</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
     </FxCompile>
+    <FxCompile Include="..\Engine\particleps.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ParticlePixelShader</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="..\Engine\particlevs.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ParticleVertexShader</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+    </FxCompile>
     <FxCompile Include="..\Engine\reflectionps.hlsl">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ReflectionPixelShader</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
@@ -343,6 +355,7 @@
     <Image Include="..\Engine\data\bump02.dds" />
     <Image Include="..\Engine\data\dirt01.dds" />
     <Image Include="..\Engine\data\spec02.dds" />
+    <Image Include="..\Engine\data\star.dds" />
     <Image Include="..\Engine\data\stone01.dds" />
     <Image Include="..\Engine\data\stone02.dds" />
   </ItemGroup>
