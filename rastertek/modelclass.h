@@ -29,6 +29,11 @@ private:
 		D3DXVECTOR3 normal;
 	};
 
+	struct InstanceType
+	{
+		D3DXVECTOR3 position;
+	};
+
 public:
 	ModelClass();
 	ModelClass(const ModelClass&);
@@ -38,8 +43,8 @@ public:
 	void Shutdown();
 	void Render(ID3D11DeviceContext*);
 
-	int GetIndexCount();
-
+	int GetVertexCount();
+	int GetInstanceCount();
 	ID3D11ShaderResourceView* GetTexture();
 
 private:
@@ -51,9 +56,10 @@ private:
 	void ReleaseTexture();
 
 private:
-	ID3D11Buffer *m_vertexBuffer, *m_indexBuffer;
-	int m_vertexCount, m_indexCount;
-
+	ID3D11Buffer *m_vertexBuffer;
+	ID3D11Buffer* m_instanceBuffer;
+	int m_vertexCount;
+	int m_instanceCount;
 	TextureClass* m_Texture;
 };
 
