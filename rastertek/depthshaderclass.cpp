@@ -3,6 +3,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "depthshaderclass.h"
 
+
 DepthShaderClass::DepthShaderClass()
 {
 	m_vertexShader = 0;
@@ -21,9 +22,12 @@ DepthShaderClass::~DepthShaderClass()
 {
 }
 
+
 bool DepthShaderClass::Initialize(ID3D11Device* device, HWND hwnd)
 {
 	bool result;
+
+
 	// Initialize the vertex and pixel shaders.
 	result = InitializeShader(device, hwnd, L"../Engine/depthvs.hlsl", L"../Engine/depthps.hlsl");
 	if (!result)
@@ -43,6 +47,7 @@ void DepthShaderClass::Shutdown()
 	return;
 }
 
+
 bool DepthShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix,
 	D3DXMATRIX projectionMatrix)
 {
@@ -61,6 +66,7 @@ bool DepthShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount
 
 	return true;
 }
+
 
 bool DepthShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* vsFilename, WCHAR* psFilename)
 {
@@ -175,6 +181,7 @@ bool DepthShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* 
 	return true;
 }
 
+
 void DepthShaderClass::ShutdownShader()
 {
 	// Release the matrix constant buffer.
@@ -207,6 +214,7 @@ void DepthShaderClass::ShutdownShader()
 
 	return;
 }
+
 
 void DepthShaderClass::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hwnd, WCHAR* shaderFilename)
 {
@@ -242,6 +250,7 @@ void DepthShaderClass::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND h
 
 	return;
 }
+
 
 bool DepthShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix)
 {
@@ -282,6 +291,7 @@ bool DepthShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, D
 
 	return true;
 }
+
 
 void DepthShaderClass::RenderShader(ID3D11DeviceContext* deviceContext, int indexCount)
 {
