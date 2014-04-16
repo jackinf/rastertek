@@ -23,6 +23,7 @@
 #include "inputclass.h"
 #include "graphicsclass.h"
 #include "timerclass.h"
+#include "positionclass.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -43,6 +44,7 @@ public:
 
 private:
 	bool Frame();
+	bool HandleInput(float);
 	void InitializeWindows(int&, int&);
 	void ShutdownWindows();
 
@@ -54,6 +56,7 @@ private:
 	InputClass* m_Input;
 	GraphicsClass* m_Graphics;
 	TimerClass* m_Timer;
+	PositionClass* m_Position;
 };
 
 

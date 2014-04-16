@@ -48,8 +48,8 @@ public:
 
 	void GetVideoCardInfo(char*, int&);
 
-	void EnableAlphaBlending();
-	void DisableAlphaBlending();
+	void SetBackBufferRenderTarget();
+	void ResetViewport();
 
 private:
 	bool m_vsync_enabled;
@@ -66,8 +66,7 @@ private:
 	D3DXMATRIX m_projectionMatrix;
 	D3DXMATRIX m_worldMatrix;
 	D3DXMATRIX m_orthoMatrix;
-	ID3D11BlendState* m_alphaEnableBlendingState;
-	ID3D11BlendState* m_alphaDisableBlendingState;
+	D3D11_VIEWPORT m_viewport;
 };
 
 #endif

@@ -9,6 +9,7 @@ SystemClass::SystemClass()
 	m_Input = 0;
 	m_Graphics = 0;
 	m_Timer = 0;
+	m_Position = 0;
 }
 
 
@@ -43,7 +44,12 @@ bool SystemClass::Initialize()
 	}
 
 	// Initialize the input object.
-	m_Input->Initialize();
+	result = m_Input->Initialize(m_hinstance, m_hwnd, screenWidth, screenHeight);
+	if (!result)
+	{
+		MessageBox(m_hwnd, L"Could not initialize the input object.", L"Error", MB_OK);
+		return false;
+	}
 
 	// Create the graphics object.  This object will handle rendering all the graphics for this application.
 	m_Graphics = new GraphicsClass;
@@ -70,9 +76,19 @@ bool SystemClass::Initialize()
 	result = m_Timer->Initialize();
 	if (!result)
 	{
-		MessageBox(m_hwnd, L"Could not initialize the Timer object.", L"Error", MB_OK);
+		MessageBox(m_hwnd, L"Could not initialize the timer object.", L"Error", MB_OK);
 		return false;
 	}
+
+	// Create the position object.
+	m_Position = new PositionClass;
+	if (!m_Position)
+	{
+		return false;
+	}
+
+	// Set the initial position of the viewer to the same as the initial camera position.
+	m_Position->SetPosition(0.0f, 2.0f, -10.0f);
 
 	return true;
 }
@@ -80,6 +96,13 @@ bool SystemClass::Initialize()
 
 void SystemClass::Shutdown()
 {
+	// Release the position object.
+	if (m_Position)
+	{
+		delete m_Position;
+		m_Position = 0;
+	}
+
 	// Release the timer object.
 	if (m_Timer)
 	{
@@ -153,19 +176,38 @@ void SystemClass::Run()
 bool SystemClass::Frame()
 {
 	bool result;
+	float posX, posY, posZ, rotX, rotY, rotZ;
 
 
-	// Update the system stats.
-	m_Timer->Frame();
-
-	// Check if the user pressed escape and wants to exit the application.
-	if (m_Input->IsKeyDown(VK_ESCAPE))
+	// Read the user input.
+	result = m_Input->Frame();
+	if (!result)
 	{
 		return false;
 	}
 
+	// Check if the user pressed escape and wants to exit the application.
+	if (m_Input->IsEscapePressed() == true)
+	{
+		return false;
+	}
+
+	// Update the system stats.
+	m_Timer->Frame();
+
+	// Do the frame input processing.
+	result = HandleInput(m_Timer->GetTime());
+	if (!result)
+	{
+		return false;
+	}
+
+	// Get the view point position/rotation.
+	m_Position->GetPosition(posX, posY, posZ);
+	m_Position->GetRotation(rotX, rotY, rotZ);
+
 	// Do the frame processing for the graphics object.
-	result = m_Graphics->Frame(m_Timer->GetTime());
+	result = m_Graphics->Frame(posX, posY, posZ, rotX, rotY, rotZ);
 	if (!result)
 	{
 		return false;
@@ -175,32 +217,46 @@ bool SystemClass::Frame()
 }
 
 
+bool SystemClass::HandleInput(float frameTime)
+{
+	bool keyDown;
+
+
+	// Set the frame time for calculating the updated position.
+	m_Position->SetFrameTime(frameTime);
+
+	// Handle the input.
+	keyDown = m_Input->IsLeftPressed();
+	m_Position->TurnLeft(keyDown);
+
+	keyDown = m_Input->IsRightPressed();
+	m_Position->TurnRight(keyDown);
+
+	keyDown = m_Input->IsUpPressed();
+	m_Position->MoveForward(keyDown);
+
+	keyDown = m_Input->IsDownPressed();
+	m_Position->MoveBackward(keyDown);
+
+	keyDown = m_Input->IsAPressed();
+	m_Position->MoveUpward(keyDown);
+
+	keyDown = m_Input->IsZPressed();
+	m_Position->MoveDownward(keyDown);
+
+	keyDown = m_Input->IsPgUpPressed();
+	m_Position->LookUpward(keyDown);
+
+	keyDown = m_Input->IsPgDownPressed();
+	m_Position->LookDownward(keyDown);
+
+	return true;
+}
+
+
 LRESULT CALLBACK SystemClass::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam)
 {
-	switch (umsg)
-	{
-		// Check if a key has been pressed on the keyboard.
-	case WM_KEYDOWN:
-	{
-					   // If a key is pressed send it to the input object so it can record that state.
-					   m_Input->KeyDown((unsigned int)wparam);
-					   return 0;
-	}
-
-		// Check if a key has been released on the keyboard.
-	case WM_KEYUP:
-	{
-					 // If a key is released then send it to the input object so it can unset the state for that key.
-					 m_Input->KeyUp((unsigned int)wparam);
-					 return 0;
-	}
-
-		// Any other messages send to the default message handler as our application won't make use of them.
-	default:
-	{
-			   return DefWindowProc(hwnd, umsg, wparam, lparam);
-	}
-	}
+	return DefWindowProc(hwnd, umsg, wparam, lparam);
 }
 
 
@@ -271,7 +327,7 @@ void SystemClass::InitializeWindows(int& screenWidth, int& screenHeight)
 
 	// Create the window with the screen settings and get the handle to it.
 	m_hwnd = CreateWindowEx(WS_EX_APPWINDOW, m_applicationName, m_applicationName,
-		WS_POPUP,
+		WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_POPUP,
 		posX, posY, screenWidth, screenHeight, NULL, NULL, m_hinstance, NULL);
 
 	// Bring the window up on the screen and set it as main focus.

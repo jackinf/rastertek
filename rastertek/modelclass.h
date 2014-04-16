@@ -13,10 +13,12 @@
 #include <fstream>
 using namespace std;
 
+
 ///////////////////////
 // MY CLASS INCLUDES //
 ///////////////////////
-#include "texturearrayclass.h"
+#include "textureclass.h"
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: ModelClass
@@ -29,8 +31,6 @@ private:
 		D3DXVECTOR3 position;
 		D3DXVECTOR2 texture;
 		D3DXVECTOR3 normal;
-		D3DXVECTOR3 tangent;
-		D3DXVECTOR3 binormal;
 	};
 
 	struct ModelType
@@ -38,20 +38,6 @@ private:
 		float x, y, z;
 		float tu, tv;
 		float nx, ny, nz;
-		float tx, ty, tz;
-		float bx, by, bz;
-	};
-
-	struct TempVertexType
-	{
-		float x, y, z;
-		float tu, tv;
-		float nx, ny, nz;
-	};
-
-	struct VectorType
-	{
-		float x, y, z;
 	};
 
 public:
@@ -59,42 +45,33 @@ public:
 	ModelClass(const ModelClass&);
 	~ModelClass();
 
-	bool Initialize(ID3D11Device*, WCHAR*, char*);
-	bool Initialize(ID3D11Device*, char*);
 	bool Initialize(ID3D11Device*, char*, WCHAR*);
-	bool Initialize(ID3D11Device*, char*, WCHAR*, WCHAR*);
-	bool Initialize(ID3D11Device*, char*, WCHAR*, WCHAR*, WCHAR*);
 	void Shutdown();
 	void Render(ID3D11DeviceContext*);
 
 	int GetIndexCount();
-	ID3D11ShaderResourceView** GetTextureArray();
 	ID3D11ShaderResourceView* GetTexture();
-	ID3D11ShaderResourceView* GetTexture1();
-	ID3D11ShaderResourceView* GetTexture2();
-	ID3D11ShaderResourceView* GetTexture3();
-	ID3D11ShaderResourceView* GetNormalMap();
+
+	void SetPosition(float, float, float);
+	void GetPosition(float&, float&, float&);
 
 private:
 	bool InitializeBuffers(ID3D11Device*);
 	void ShutdownBuffers();
 	void RenderBuffers(ID3D11DeviceContext*);
 
-	bool LoadTextures(ID3D11Device*, WCHAR*, WCHAR*, WCHAR*);
-	void ReleaseTextures();
+	bool LoadTexture(ID3D11Device*, WCHAR*);
+	void ReleaseTexture();
 
 	bool LoadModel(char*);
 	void ReleaseModel();
 
-	void CalculateModelVectors();
-	void CalculateTangentBinormal(TempVertexType, TempVertexType, TempVertexType, VectorType&, VectorType&);
-	void CalculateNormal(VectorType, VectorType, VectorType&);
-
 private:
 	ID3D11Buffer *m_vertexBuffer, *m_indexBuffer;
 	int m_vertexCount, m_indexCount;
+	TextureClass* m_Texture;
 	ModelType* m_model;
-	TextureArrayClass* m_TextureArray;
+	float m_positionX, m_positionY, m_positionZ;
 };
 
 #endif
