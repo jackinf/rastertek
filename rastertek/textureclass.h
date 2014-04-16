@@ -4,11 +4,13 @@
 #ifndef _TEXTURECLASS_H_
 #define _TEXTURECLASS_H_
 
+
 //////////////
 // INCLUDES //
 //////////////
 #include <d3d11.h>
-#include <D3DX11tex.h>
+#include <d3dx11tex.h>
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: TextureClass
@@ -17,7 +19,7 @@ class TextureClass
 {
 public:
 	TextureClass();
-	TextureClass(const TextureClass& other);
+	TextureClass(const TextureClass&);
 	~TextureClass();
 
 	bool Initialize(ID3D11Device*, WCHAR*);

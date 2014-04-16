@@ -23,8 +23,7 @@
 #include "inputclass.h"
 #include "graphicsclass.h"
 #include "timerclass.h"
-#include "positionclass.h"
-#include "soundclass.h"
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: SystemClass
@@ -55,8 +54,6 @@ private:
 	InputClass* m_Input;
 	GraphicsClass* m_Graphics;
 	TimerClass* m_Timer;
-	PositionClass* m_Position;
-	SoundClass* m_Sound;
 };
 
 

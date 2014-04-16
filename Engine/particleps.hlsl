@@ -13,13 +13,13 @@ SamplerState SampleType;
 //////////////
 // TYPEDEFS //
 //////////////
-
 struct PixelInputType
 {
 	float4 position : SV_POSITION;
 	float2 tex : TEXCOORD0;
 	float4 color : COLOR;
 };
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Pixel Shader

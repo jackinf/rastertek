@@ -27,6 +27,8 @@ ParticleShaderClass::~ParticleShaderClass()
 bool ParticleShaderClass::Initialize(ID3D11Device* device, HWND hwnd)
 {
 	bool result;
+
+
 	// Initialize the vertex and pixel shaders.
 	result = InitializeShader(device, hwnd, L"../Engine/particlevs.hlsl", L"../Engine/particleps.hlsl");
 	if (!result)
@@ -36,6 +38,7 @@ bool ParticleShaderClass::Initialize(ID3D11Device* device, HWND hwnd)
 
 	return true;
 }
+
 
 void ParticleShaderClass::Shutdown()
 {
@@ -64,6 +67,7 @@ bool ParticleShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCo
 
 	return true;
 }
+
 
 bool ParticleShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* vsFilename, WCHAR* psFilename)
 {
@@ -217,6 +221,7 @@ bool ParticleShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHA
 	return true;
 }
 
+
 void ParticleShaderClass::ShutdownShader()
 {
 	// Release the sampler state.
@@ -257,6 +262,7 @@ void ParticleShaderClass::ShutdownShader()
 	return;
 }
 
+
 void ParticleShaderClass::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hwnd, WCHAR* shaderFilename)
 {
 	char* compileErrors;
@@ -291,6 +297,7 @@ void ParticleShaderClass::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWN
 
 	return;
 }
+
 
 bool ParticleShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix,
 	D3DXMATRIX projectionMatrix, ID3D11ShaderResourceView* texture)
@@ -335,6 +342,7 @@ bool ParticleShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext
 
 	return true;
 }
+
 
 void ParticleShaderClass::RenderShader(ID3D11DeviceContext* deviceContext, int indexCount)
 {

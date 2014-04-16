@@ -75,8 +75,10 @@ private:
 	float m_particleVelocity, m_particleVelocityVariation;
 	float m_particleSize, m_particlesPerSecond;
 	int m_maxParticles;
+
 	int m_currentParticleCount;
 	float m_accumulatedTime;
+
 	TextureClass* m_Texture;
 	ParticleType* m_particleList;
 	int m_vertexCount, m_indexCount;

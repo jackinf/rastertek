@@ -3,6 +3,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "particlesystemclass.h"
 
+
 ParticleSystemClass::ParticleSystemClass()
 {
 	m_Texture = 0;
@@ -21,6 +22,7 @@ ParticleSystemClass::ParticleSystemClass(const ParticleSystemClass& other)
 ParticleSystemClass::~ParticleSystemClass()
 {
 }
+
 
 bool ParticleSystemClass::Initialize(ID3D11Device* device, WCHAR* textureFilename)
 {
@@ -51,6 +53,7 @@ bool ParticleSystemClass::Initialize(ID3D11Device* device, WCHAR* textureFilenam
 	return true;
 }
 
+
 void ParticleSystemClass::Shutdown()
 {
 	// Release the buffers.
@@ -64,6 +67,7 @@ void ParticleSystemClass::Shutdown()
 
 	return;
 }
+
 
 bool ParticleSystemClass::Frame(float frameTime, ID3D11DeviceContext* deviceContext)
 {
@@ -89,6 +93,7 @@ bool ParticleSystemClass::Frame(float frameTime, ID3D11DeviceContext* deviceCont
 	return true;
 }
 
+
 void ParticleSystemClass::Render(ID3D11DeviceContext* deviceContext)
 {
 	// Put the vertex and index buffers on the graphics pipeline to prepare them for drawing.
@@ -97,15 +102,18 @@ void ParticleSystemClass::Render(ID3D11DeviceContext* deviceContext)
 	return;
 }
 
+
 ID3D11ShaderResourceView* ParticleSystemClass::GetTexture()
 {
 	return m_Texture->GetTexture();
 }
 
+
 int ParticleSystemClass::GetIndexCount()
 {
 	return m_indexCount;
 }
+
 
 bool ParticleSystemClass::LoadTexture(ID3D11Device* device, WCHAR* filename)
 {
@@ -129,6 +137,7 @@ bool ParticleSystemClass::LoadTexture(ID3D11Device* device, WCHAR* filename)
 	return true;
 }
 
+
 void ParticleSystemClass::ReleaseTexture()
 {
 	// Release the texture object.
@@ -142,9 +151,11 @@ void ParticleSystemClass::ReleaseTexture()
 	return;
 }
 
+
 bool ParticleSystemClass::InitializeParticleSystem()
 {
 	int i;
+
 
 	// Set the random deviation of where the particles can be located when emitted.
 	m_particleDeviationX = 0.5f;
@@ -186,6 +197,7 @@ bool ParticleSystemClass::InitializeParticleSystem()
 	return true;
 }
 
+
 void ParticleSystemClass::ShutdownParticleSystem()
 {
 	// Release the particle list.
@@ -198,6 +210,7 @@ void ParticleSystemClass::ShutdownParticleSystem()
 	return;
 }
 
+
 bool ParticleSystemClass::InitializeBuffers(ID3D11Device* device)
 {
 	unsigned long* indices;
@@ -205,6 +218,7 @@ bool ParticleSystemClass::InitializeBuffers(ID3D11Device* device)
 	D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc;
 	D3D11_SUBRESOURCE_DATA vertexData, indexData;
 	HRESULT result;
+
 
 	// Set the maximum number of vertices in the vertex array.
 	m_vertexCount = m_maxParticles * 6;
@@ -227,10 +241,10 @@ bool ParticleSystemClass::InitializeBuffers(ID3D11Device* device)
 	}
 
 	// Initialize vertex array to zeros at first.
-	memset(m_vertices, 0, sizeof(VertexType)* m_vertexCount);
+	memset(m_vertices, 0, (sizeof(VertexType)* m_vertexCount));
 
 	// Initialize the index array.
-	for (i = 0; i < m_indexCount; i++)
+	for (i = 0; i<m_indexCount; i++)
 	{
 		indices[i] = i;
 	}
@@ -248,6 +262,7 @@ bool ParticleSystemClass::InitializeBuffers(ID3D11Device* device)
 	vertexData.SysMemPitch = 0;
 	vertexData.SysMemSlicePitch = 0;
 
+	// Now finally create the vertex buffer.
 	result = device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertexBuffer);
 	if (FAILED(result))
 	{
@@ -281,6 +296,7 @@ bool ParticleSystemClass::InitializeBuffers(ID3D11Device* device)
 	return true;
 }
 
+
 void ParticleSystemClass::ShutdownBuffers()
 {
 	// Release the index buffer.
@@ -306,6 +322,7 @@ void ParticleSystemClass::EmitParticles(float frameTime)
 	bool emitParticle, found;
 	float positionX, positionY, positionZ, velocity, red, green, blue;
 	int index, i, j;
+
 
 	// Increment the frame time.
 	m_accumulatedTime += frameTime;
@@ -336,6 +353,8 @@ void ParticleSystemClass::EmitParticles(float frameTime)
 		green = (((float)rand() - (float)rand()) / RAND_MAX) + 0.5f;
 		blue = (((float)rand() - (float)rand()) / RAND_MAX) + 0.5f;
 
+		// Now since the particles need to be rendered from back to front for blending we have to sort the particle array.
+		// We will sort using Z depth so we need to find where in the list the particle should be inserted.
 		index = 0;
 		found = false;
 		while (!found)
@@ -377,12 +396,11 @@ void ParticleSystemClass::EmitParticles(float frameTime)
 		m_particleList[index].blue = blue;
 		m_particleList[index].velocity = velocity;
 		m_particleList[index].active = true;
-
 	}
 
 	return;
-
 }
+
 
 void ParticleSystemClass::UpdateParticles(float frameTime)
 {
@@ -392,11 +410,12 @@ void ParticleSystemClass::UpdateParticles(float frameTime)
 	// Each frame we update all the particles by making them move downwards using their position, velocity, and the frame time.
 	for (i = 0; i<m_currentParticleCount; i++)
 	{
-		m_particleList[i].positionY = m_particleList[i].positionY - (m_particleList[i].velocity * frameTime * 0.0005f);
+		m_particleList[i].positionY = m_particleList[i].positionY - (m_particleList[i].velocity * frameTime * 0.001f);
 	}
 
 	return;
 }
+
 
 void ParticleSystemClass::KillParticles()
 {
@@ -429,6 +448,7 @@ void ParticleSystemClass::KillParticles()
 	return;
 }
 
+
 bool ParticleSystemClass::UpdateBuffers(ID3D11DeviceContext* deviceContext)
 {
 	int index, i;
@@ -436,13 +456,14 @@ bool ParticleSystemClass::UpdateBuffers(ID3D11DeviceContext* deviceContext)
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	VertexType* verticesPtr;
 
+
 	// Initialize vertex array to zeros at first.
 	memset(m_vertices, 0, (sizeof(VertexType)* m_vertexCount));
 
 	// Now build the vertex array from the particle list array.  Each particle is a quad made out of two triangles.
 	index = 0;
 
-	for (i = 0; i < m_currentParticleCount; i++)
+	for (i = 0; i<m_currentParticleCount; i++)
 	{
 		// Bottom left.
 		m_vertices[index].position = D3DXVECTOR3(m_particleList[i].positionX - m_particleSize, m_particleList[i].positionY - m_particleSize, m_particleList[i].positionZ);
@@ -498,8 +519,8 @@ bool ParticleSystemClass::UpdateBuffers(ID3D11DeviceContext* deviceContext)
 	deviceContext->Unmap(m_vertexBuffer, 0);
 
 	return true;
-
 }
+
 
 void ParticleSystemClass::RenderBuffers(ID3D11DeviceContext* deviceContext)
 {

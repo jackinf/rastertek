@@ -26,11 +26,7 @@ GraphicsClass::~GraphicsClass()
 bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 {
 	bool result;
-	int downSampleWidth, downSampleHeight;
 
-	// Set the size to sample down to.
-	downSampleWidth = screenWidth / 2;
-	downSampleHeight = screenHeight / 2;
 
 	// Create the Direct3D object.
 	m_D3D = new D3DClass;
@@ -130,6 +126,7 @@ void GraphicsClass::Shutdown()
 bool GraphicsClass::Frame(float frameTime)
 {
 	bool result;
+
 
 	// Run the frame processing for the particle system.
 	m_ParticleSystem->Frame(frameTime, m_D3D->GetDeviceContext());

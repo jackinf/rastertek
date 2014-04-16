@@ -5,15 +5,6 @@
 #define _GRAPHICSCLASS_H_
 
 
-/////////////
-// GLOBALS //
-/////////////
-const bool FULL_SCREEN = false;
-const bool VSYNC_ENABLED = false;
-const float SCREEN_DEPTH = 1000.0f;
-const float SCREEN_NEAR = 0.1f;
-
-
 ///////////////////////
 // MY CLASS INCLUDES //
 ///////////////////////
@@ -21,6 +12,16 @@ const float SCREEN_NEAR = 0.1f;
 #include "cameraclass.h"
 #include "particleshaderclass.h"
 #include "particlesystemclass.h"
+
+
+/////////////
+// GLOBALS //
+/////////////
+const bool FULL_SCREEN = false;
+const bool VSYNC_ENABLED = true;
+const float SCREEN_DEPTH = 1000.0f;
+const float SCREEN_NEAR = 0.1f;
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: GraphicsClass

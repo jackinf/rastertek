@@ -17,7 +17,6 @@ cbuffer MatrixBuffer
 //////////////
 // TYPEDEFS //
 //////////////
-
 struct VertexInputType
 {
 	float4 position : POSITION;
@@ -31,6 +30,7 @@ struct PixelInputType
 	float2 tex : TEXCOORD0;
 	float4 color : COLOR;
 };
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Vertex Shader
