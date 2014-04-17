@@ -114,6 +114,7 @@
     <ClCompile Include="refractionshaderclass.cpp" />
     <ClCompile Include="rendertextureclass.cpp" />
     <ClCompile Include="shadowshaderclass.cpp" />
+    <ClCompile Include="shoftshadowshaderclass.cpp" />
     <ClCompile Include="soundclass.cpp" />
     <ClCompile Include="specmapshaderclass.cpp" />
     <ClCompile Include="systemclass.cpp" />
@@ -163,6 +164,7 @@
     <ClInclude Include="refractionshaderclass.h" />
     <ClInclude Include="rendertextureclass.h" />
     <ClInclude Include="shadowshaderclass.h" />
+    <ClInclude Include="softshadowshaderclass.h" />
     <ClInclude Include="soundclass.h" />
     <ClInclude Include="specmapshaderclass.h" />
     <ClInclude Include="systemclass.h" />
@@ -310,6 +312,16 @@
     </FxCompile>
     <FxCompile Include="..\Engine\shadowvs.hlsl">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ShadowVertexShader</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="..\Engine\softshadowps.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">SoftShadowPixelShader</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="..\Engine\softshadowvs.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">SoftShadowVertexShader</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
     </FxCompile>

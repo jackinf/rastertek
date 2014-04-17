@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////////////////////////////////
-// Filename: shadow.vs
+// Filename: softshadow.vs
 ////////////////////////////////////////////////////////////////////////////////
 
 
@@ -11,8 +11,6 @@ cbuffer MatrixBuffer
 	matrix worldMatrix;
 	matrix viewMatrix;
 	matrix projectionMatrix;
-	matrix lightViewMatrix;
-	matrix lightProjectionMatrix;
 };
 
 
@@ -41,7 +39,7 @@ struct PixelInputType
 	float4 position : SV_POSITION;
 	float2 tex : TEXCOORD0;
 	float3 normal : NORMAL;
-	float4 lightViewPosition : TEXCOORD1;
+	float4 viewPosition : TEXCOORD1;
 	float3 lightPos : TEXCOORD2;
 };
 
@@ -49,7 +47,7 @@ struct PixelInputType
 ////////////////////////////////////////////////////////////////////////////////
 // Vertex Shader
 ////////////////////////////////////////////////////////////////////////////////
-PixelInputType ShadowVertexShader(VertexInputType input)
+PixelInputType SoftShadowVertexShader(VertexInputType input)
 {
 	PixelInputType output;
 	float4 worldPosition;
@@ -63,10 +61,8 @@ PixelInputType ShadowVertexShader(VertexInputType input)
 	output.position = mul(output.position, viewMatrix);
 	output.position = mul(output.position, projectionMatrix);
 
-	// Calculate the position of the vertice as viewed by the light source.
-	output.lightViewPosition = mul(input.position, worldMatrix);
-	output.lightViewPosition = mul(output.lightViewPosition, lightViewMatrix);
-	output.lightViewPosition = mul(output.lightViewPosition, lightProjectionMatrix);
+	// Store the position of the vertice as viewed by the camera in a separate variable.
+	output.viewPosition = output.position;
 
 	// Store the texture coordinates for the pixel shader.
 	output.tex = input.tex;
