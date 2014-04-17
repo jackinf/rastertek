@@ -55,14 +55,16 @@ void ShadowShaderClass::Shutdown()
 bool ShadowShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix,
 	D3DXMATRIX projectionMatrix, D3DXMATRIX lightViewMatrix, D3DXMATRIX lightProjectionMatrix,
 	ID3D11ShaderResourceView* texture, ID3D11ShaderResourceView* depthMapTexture, D3DXVECTOR3 lightPosition,
-	D3DXVECTOR4 ambientColor, D3DXVECTOR4 diffuseColor)
+	D3DXVECTOR4 ambientColor, D3DXVECTOR4 diffuseColor, D3DXMATRIX lightViewMatrix2, D3DXMATRIX lightProjectionMatrix2,
+	ID3D11ShaderResourceView* depthMapTexture2, D3DXVECTOR3 lightPosition2, D3DXVECTOR4 diffuseColor2)
 {
 	bool result;
 
 
 	// Set the shader parameters that it will use for rendering.
-	result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix, lightProjectionMatrix, texture,
-		depthMapTexture, lightPosition, ambientColor, diffuseColor);
+	result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix, lightProjectionMatrix, texture, 
+				     depthMapTexture, lightPosition, ambientColor, diffuseColor, lightViewMatrix2, lightProjectionMatrix2, depthMapTexture2,
+				     lightPosition2, diffuseColor2);
 	if (!result)
 	{
 		return false;
@@ -371,7 +373,9 @@ void ShadowShaderClass::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND 
 bool ShadowShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix,
 	D3DXMATRIX projectionMatrix, D3DXMATRIX lightViewMatrix, D3DXMATRIX lightProjectionMatrix,
 	ID3D11ShaderResourceView* texture, ID3D11ShaderResourceView* depthMapTexture, D3DXVECTOR3 lightPosition,
-	D3DXVECTOR4 ambientColor, D3DXVECTOR4 diffuseColor)
+	D3DXVECTOR4 ambientColor, D3DXVECTOR4 diffuseColor, D3DXMATRIX lightViewMatrix2,
+	D3DXMATRIX lightProjectionMatrix2, ID3D11ShaderResourceView* depthMapTexture2, D3DXVECTOR3 lightPosition2,
+	D3DXVECTOR4 diffuseColor2)
 {
 	HRESULT result;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
@@ -387,6 +391,8 @@ bool ShadowShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, 
 	D3DXMatrixTranspose(&projectionMatrix, &projectionMatrix);
 	D3DXMatrixTranspose(&lightViewMatrix, &lightViewMatrix);
 	D3DXMatrixTranspose(&lightProjectionMatrix, &lightProjectionMatrix);
+	D3DXMatrixTranspose(&lightViewMatrix2, &lightViewMatrix2);
+	D3DXMatrixTranspose(&lightProjectionMatrix2, &lightProjectionMatrix2);
 
 	// Lock the constant buffer so it can be written to.
 	result = deviceContext->Map(m_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
@@ -404,6 +410,8 @@ bool ShadowShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, 
 	dataPtr->projection = projectionMatrix;
 	dataPtr->lightView = lightViewMatrix;
 	dataPtr->lightProjection = lightProjectionMatrix;
+	dataPtr->lightView2 = lightViewMatrix2;
+	dataPtr->lightProjection2 = lightProjectionMatrix2;
 
 	// Unlock the constant buffer.
 	deviceContext->Unmap(m_matrixBuffer, 0);
@@ -417,6 +425,7 @@ bool ShadowShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, 
 	// Set shader texture resource in the pixel shader.
 	deviceContext->PSSetShaderResources(0, 1, &texture);
 	deviceContext->PSSetShaderResources(1, 1, &depthMapTexture);
+	deviceContext->PSSetShaderResources(2, 1, &depthMapTexture2);
 
 	// Lock the light constant buffer so it can be written to.
 	result = deviceContext->Map(m_lightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
@@ -431,6 +440,7 @@ bool ShadowShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, 
 	// Copy the lighting variables into the constant buffer.
 	dataPtr2->ambientColor = ambientColor;
 	dataPtr2->diffuseColor = diffuseColor;
+	dataPtr2->diffuseColor2 = diffuseColor2;
 
 	// Unlock the constant buffer.
 	deviceContext->Unmap(m_lightBuffer, 0);
@@ -453,7 +463,9 @@ bool ShadowShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, 
 
 	// Copy the lighting variables into the constant buffer.
 	dataPtr3->lightPosition = lightPosition;
-	dataPtr3->padding = 0.0f;
+	dataPtr3->padding1 = 0.0f;
+	dataPtr3->lightPosition2 = lightPosition2;
+	dataPtr3->padding2 = 0.0f;
 
 	// Unlock the constant buffer.
 	deviceContext->Unmap(m_lightBuffer2, 0);

@@ -44,6 +44,7 @@ public:
 
 private:
 	bool RenderSceneToTexture();
+	bool RenderSceneToTexture2();
 	bool Render();
 
 private:
@@ -54,6 +55,8 @@ private:
 	RenderTextureClass* m_RenderTexture;
 	DepthShaderClass* m_DepthShader;
 	ShadowShaderClass* m_ShadowShader;
+	LightClass* m_Light2;
+	RenderTextureClass* m_RenderTexture2;
 };
 
 #endif

@@ -8,6 +8,7 @@
 //////////////
 Texture2D shaderTexture : register(t0);
 Texture2D depthMapTexture : register(t1);
+Texture2D depthMapTexture2 : register(t2);
 
 
 ///////////////////
@@ -24,6 +25,7 @@ cbuffer LightBuffer
 {
 	float4 ambientColor;
 	float4 diffuseColor;
+	float4 diffuseColor2;
 };
 
 
@@ -37,6 +39,8 @@ struct PixelInputType
 	float3 normal : NORMAL;
 	float4 lightViewPosition : TEXCOORD1;
 	float3 lightPos : TEXCOORD2;
+	float4 lightViewPosition2 : TEXCOORD3;
+	float3 lightPos2 : TEXCOORD4;
 };
 
 
@@ -87,12 +91,32 @@ float4 ShadowPixelShader(PixelInputType input) : SV_TARGET
 			{
 				// Determine the final diffuse color based on the diffuse color and the amount of light intensity.
 				color += (diffuseColor * lightIntensity);
-
-				// Saturate the final light color.
-				color = saturate(color);
 			}
 		}
 	}
+
+	// Second light.
+	projectTexCoord.x = input.lightViewPosition2.x / input.lightViewPosition2.w / 2.0f + 0.5f;
+	projectTexCoord.y = -input.lightViewPosition2.y / input.lightViewPosition2.w / 2.0f + 0.5f;
+
+	if ((saturate(projectTexCoord.x) == projectTexCoord.x) && (saturate(projectTexCoord.y) == projectTexCoord.y))
+	{
+		depthValue = depthMapTexture2.Sample(SampleTypeClamp, projectTexCoord).r;
+
+		lightDepthValue = input.lightViewPosition2.z / input.lightViewPosition2.w;
+		lightDepthValue = lightDepthValue - bias;
+
+		if (lightDepthValue < depthValue)
+		{
+			lightIntensity = saturate(dot(input.normal, input.lightPos2));
+			if (lightIntensity > 0.0f)
+			{
+				color += (diffuseColor2 * lightIntensity);
+			}
+		}
+	}
+
+	color = saturate(color);
 
 	// Sample the pixel color from the texture using the sampler at this texture coordinate location.
 	textureColor = shaderTexture.Sample(SampleTypeWrap, input.tex);
