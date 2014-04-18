@@ -27,9 +27,6 @@
     <ClCompile Include="inputclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="graphicsclass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="d3dclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -163,6 +160,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="shoftshadowshaderclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="projectionshaderclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="viewpointclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="graphicsclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -311,6 +317,12 @@
     <ClInclude Include="softshadowshaderclass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="projectionshaderclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="viewpointclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="pscolor.hlsl">
@@ -445,18 +457,14 @@
     <FxCompile Include="..\Engine\shadowvs.hlsl">
       <Filter>Engine</Filter>
     </FxCompile>
-    <FxCompile Include="..\Engine\softshadowps.hlsl">
-      <Filter>Engine</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Engine\softshadowvs.hlsl">
-      <Filter>Engine</Filter>
-    </FxCompile>
     <FxCompile Include="..\Engine\projectionps.hlsl">
       <Filter>Engine</Filter>
     </FxCompile>
     <FxCompile Include="..\Engine\projectionvs.hlsl">
       <Filter>Engine</Filter>
     </FxCompile>
+    <FxCompile Include="..\Engine\softshadowps.hlsl" />
+    <FxCompile Include="..\Engine\softshadowvs.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\Engine\data\stone01.dds">

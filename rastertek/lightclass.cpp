@@ -48,6 +48,12 @@ void LightClass::SetLookAt(float x, float y, float z)
 	return;
 }
 
+void LightClass::SetDirection(float x, float y, float z)
+{
+	m_direction = D3DXVECTOR3(x, y, z);
+	return;
+}
+
 
 D3DXVECTOR4 LightClass::GetAmbientColor()
 {
@@ -111,4 +117,9 @@ void LightClass::GetProjectionMatrix(D3DXMATRIX& projectionMatrix)
 {
 	projectionMatrix = m_projectionMatrix;
 	return;
+}
+
+D3DXVECTOR3 LightClass::GetDirection()
+{
+	return m_direction;
 }

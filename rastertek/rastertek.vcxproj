@@ -110,6 +110,7 @@
     <ClCompile Include="particleshaderclass.cpp" />
     <ClCompile Include="particlesystemclass.cpp" />
     <ClCompile Include="positionclass.cpp" />
+    <ClCompile Include="projectionshaderclass.cpp" />
     <ClCompile Include="reflectionshaderclass.cpp" />
     <ClCompile Include="refractionshaderclass.cpp" />
     <ClCompile Include="rendertextureclass.cpp" />
@@ -126,6 +127,7 @@
     <ClCompile Include="translateshaderclass.cpp" />
     <ClCompile Include="transparentshaderclass.cpp" />
     <ClCompile Include="verticalblurshaderclass.cpp" />
+    <ClCompile Include="viewpointclass.cpp" />
     <ClCompile Include="watershaderclass.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -160,6 +162,7 @@
     <ClInclude Include="particleshaderclass.h" />
     <ClInclude Include="particlesystemclass.h" />
     <ClInclude Include="positionclass.h" />
+    <ClInclude Include="projectionshaderclass.h" />
     <ClInclude Include="reflectionshaderclass.h" />
     <ClInclude Include="refractionshaderclass.h" />
     <ClInclude Include="rendertextureclass.h" />
@@ -176,6 +179,7 @@
     <ClInclude Include="translateshaderclass.h" />
     <ClInclude Include="transparentshaderclass.h" />
     <ClInclude Include="verticalblurshaderclass.h" />
+    <ClInclude Include="viewpointclass.h" />
     <ClInclude Include="watershaderclass.h" />
   </ItemGroup>
   <ItemGroup>
@@ -287,7 +291,11 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="..\Engine\projectionps.hlsl" />
+    <FxCompile Include="..\Engine\projectionps.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ProjectionPixelShader</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+    </FxCompile>
     <FxCompile Include="..\Engine\projectionvs.hlsl">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ProjectionVertexShader</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
