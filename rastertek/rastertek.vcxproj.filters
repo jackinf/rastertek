@@ -162,6 +162,9 @@
     <ClCompile Include="shadowshaderclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="shoftshadowshaderclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="systemclass.h">
@@ -305,6 +308,9 @@
     <ClInclude Include="shadowshaderclass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="softshadowshaderclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="pscolor.hlsl">
@@ -437,6 +443,12 @@
       <Filter>Engine</Filter>
     </FxCompile>
     <FxCompile Include="..\Engine\shadowvs.hlsl">
+      <Filter>Engine</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Engine\softshadowps.hlsl">
+      <Filter>Engine</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Engine\softshadowvs.hlsl">
       <Filter>Engine</Filter>
     </FxCompile>
     <FxCompile Include="..\Engine\projectionps.hlsl">

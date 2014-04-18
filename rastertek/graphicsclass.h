@@ -15,6 +15,11 @@
 #include "rendertextureclass.h"
 #include "depthshaderclass.h"
 #include "shadowshaderclass.h"
+#include "orthowindowclass.h"
+#include "textureshaderclass.h"
+#include "horizontalblurshaderclass.h"
+#include "verticalblurshaderclass.h"
+#include "softshadowshaderclass.h"
 
 
 /////////////
@@ -44,6 +49,11 @@ public:
 
 private:
 	bool RenderSceneToTexture();
+	bool RenderBlackAndWhiteShadows();
+	bool DownSampleTexture();
+	bool RenderHorizontalBlurToTexture();
+	bool RenderVerticalBlurToTexture();
+	bool UpSampleTexture();
 	bool Render();
 
 private:
@@ -51,9 +61,15 @@ private:
 	CameraClass* m_Camera;
 	ModelClass *m_CubeModel, *m_GroundModel, *m_SphereModel;
 	LightClass* m_Light;
-	RenderTextureClass* m_RenderTexture;
+	RenderTextureClass *m_RenderTexture, *m_BlackWhiteRenderTexture, *m_DownSampleTexure;
+	RenderTextureClass *m_HorizontalBlurTexture, *m_VerticalBlurTexture, *m_UpSampleTexure;
 	DepthShaderClass* m_DepthShader;
 	ShadowShaderClass* m_ShadowShader;
+	OrthoWindowClass *m_SmallWindow, *m_FullScreenWindow;
+	TextureShaderClass* m_TextureShader;
+	HorizontalBlurShaderClass* m_HorizontalBlurShader;
+	VerticalBlurShaderClass* m_VerticalBlurShader;
+	SoftShadowShaderClass* m_SoftShadowShader;
 };
 
 #endif

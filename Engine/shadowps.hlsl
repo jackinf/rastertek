@@ -6,25 +6,13 @@
 //////////////
 // TEXTURES //
 //////////////
-Texture2D shaderTexture : register(t0);
-Texture2D depthMapTexture : register(t1);
+Texture2D depthMapTexture : register(t0);
 
 
 ///////////////////
 // SAMPLE STATES //
 ///////////////////
 SamplerState SampleTypeClamp : register(s0);
-SamplerState SampleTypeWrap  : register(s1);
-
-
-//////////////////////
-// CONSTANT BUFFERS //
-//////////////////////
-cbuffer LightBuffer
-{
-	float4 ambientColor;
-	float4 diffuseColor;
-};
 
 
 //////////////
@@ -58,7 +46,7 @@ float4 ShadowPixelShader(PixelInputType input) : SV_TARGET
 	bias = 0.001f;
 
 	// Set the default output color to the ambient light value for all pixels.
-	color = ambientColor;
+	color = float4(0.0f, 0.0f, 0.0f, 1.0f);
 
 	// Calculate the projected texture coordinates.
 	projectTexCoord.x = input.lightViewPosition.x / input.lightViewPosition.w / 2.0f + 0.5f;
@@ -86,19 +74,10 @@ float4 ShadowPixelShader(PixelInputType input) : SV_TARGET
 			if (lightIntensity > 0.0f)
 			{
 				// Determine the final diffuse color based on the diffuse color and the amount of light intensity.
-				color += (diffuseColor * lightIntensity);
-
-				// Saturate the final light color.
-				color = saturate(color);
+				color += float4(1.0f, 1.0f, 1.0f, 1.0f);
 			}
 		}
 	}
-
-	// Sample the pixel color from the texture using the sampler at this texture coordinate location.
-	textureColor = shaderTexture.Sample(SampleTypeWrap, input.tex);
-
-	// Combine the light and texture color.
-	color = color * textureColor;
 
 	return color;
 }

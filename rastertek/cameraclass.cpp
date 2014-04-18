@@ -105,3 +105,41 @@ void CameraClass::GetViewMatrix(D3DXMATRIX& viewMatrix)
 	viewMatrix = m_viewMatrix;
 	return;
 }
+
+
+void CameraClass::RenderBaseViewMatrix()
+{
+	D3DXVECTOR3 up, position, lookAt;
+	float radians;
+
+
+	// Setup the vector that points upwards.
+	up.x = 0.0f;
+	up.y = 1.0f;
+	up.z = 0.0f;
+
+	// Setup the position of the camera in the world.
+	position.x = m_positionX;
+	position.y = m_positionY;
+	position.z = m_positionZ;
+
+	// Calculate the rotation in radians.
+	radians = m_rotationY * 0.0174532925f;
+
+	// Setup where the camera is looking.
+	lookAt.x = sinf(radians) + m_positionX;
+	lookAt.y = m_positionY;
+	lookAt.z = cosf(radians) + m_positionZ;
+
+	// Create the base view matrix from the three vectors.
+	D3DXMatrixLookAtLH(&m_baseViewMatrix, &position, &lookAt, &up);
+
+	return;
+}
+
+
+void CameraClass::GetBaseViewMatrix(D3DXMATRIX& viewMatrix)
+{
+	viewMatrix = m_baseViewMatrix;
+	return;
+}
