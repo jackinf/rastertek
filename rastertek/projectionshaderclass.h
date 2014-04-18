@@ -30,6 +30,12 @@ private:
 		D3DXMATRIX projection2;
 	};
 
+	struct LightPositionBufferType
+	{
+		D3DXVECTOR3 lightPosition;
+		float padding;
+	};
+
 	struct LightBufferType
 	{
 		D3DXVECTOR4 ambientColor;
@@ -64,6 +70,7 @@ private:
 	ID3D11SamplerState* m_sampleState;
 	ID3D11Buffer* m_matrixBuffer;
 	ID3D11Buffer* m_lightBuffer;
+	ID3D11Buffer* m_lightPositionBuffer;
 };
 
 #endif

@@ -9,12 +9,11 @@
 // MY CLASS INCLUDES //
 ///////////////////////
 #include "d3dclass.h"
+#include "shadermanagerclass.h"
 #include "cameraclass.h"
-#include "modelclass.h"
 #include "lightclass.h"
-#include "projectionshaderclass.h"
-#include "textureclass.h"
-#include "viewpointclass.h"
+#include "modelclass.h"
+#include "bumpmodelclass.h"
 
 
 /////////////
@@ -22,10 +21,8 @@
 /////////////
 const bool FULL_SCREEN = false;
 const bool VSYNC_ENABLED = true;
-const float SCREEN_DEPTH = 100.0f;
-const float SCREEN_NEAR = 1.0f;
-const int SHADOWMAP_WIDTH = 1024;
-const int SHADOWMAP_HEIGHT = 1024;
+const float SCREEN_DEPTH = 1000.0f;
+const float SCREEN_NEAR = 0.1f;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -43,16 +40,16 @@ public:
 	bool Frame();
 
 private:
-	bool Render();
+	bool Render(float);
 
 private:
 	D3DClass* m_D3D;
+	ShaderManagerClass* m_ShaderManager;
 	CameraClass* m_Camera;
-	ModelClass *m_GroundModel, *m_CubeModel;
 	LightClass* m_Light;
-	ProjectionShaderClass* m_ProjectionShader;
-	TextureClass* m_ProjectionTexture;
-	ViewPointClass* m_ViewPoint;
+	ModelClass* m_Model1;
+	ModelClass* m_Model2;
+	BumpModelClass* m_Model3;
 };
 
 #endif

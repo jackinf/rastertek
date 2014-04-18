@@ -81,6 +81,7 @@
     <ClCompile Include="alphamapshaderclass.cpp" />
     <ClCompile Include="bitmapclass.cpp" />
     <ClCompile Include="bumpmapshaderclass.cpp" />
+    <ClCompile Include="bumpmodelclass.cpp" />
     <ClCompile Include="cameraclass.cpp" />
     <ClCompile Include="clipplaneshaderclass.cpp" />
     <ClCompile Include="colorshaderclass.cpp" />
@@ -114,6 +115,7 @@
     <ClCompile Include="reflectionshaderclass.cpp" />
     <ClCompile Include="refractionshaderclass.cpp" />
     <ClCompile Include="rendertextureclass.cpp" />
+    <ClCompile Include="shadermanagerclass.cpp" />
     <ClCompile Include="shadowshaderclass.cpp" />
     <ClCompile Include="shoftshadowshaderclass.cpp" />
     <ClCompile Include="soundclass.cpp" />
@@ -134,6 +136,7 @@
     <ClInclude Include="alphamapshaderclass.h" />
     <ClInclude Include="bitmapclass.h" />
     <ClInclude Include="bumpmapshaderclass.h" />
+    <ClInclude Include="bumpmodelclass.h" />
     <ClInclude Include="cameraclass.h" />
     <ClInclude Include="clipplaneshaderclass.h" />
     <ClInclude Include="colorshaderclass.h" />
@@ -166,6 +169,7 @@
     <ClInclude Include="reflectionshaderclass.h" />
     <ClInclude Include="refractionshaderclass.h" />
     <ClInclude Include="rendertextureclass.h" />
+    <ClInclude Include="shadermanagerclass.h" />
     <ClInclude Include="shadowshaderclass.h" />
     <ClInclude Include="softshadowshaderclass.h" />
     <ClInclude Include="soundclass.h" />

@@ -4,20 +4,18 @@
 
 
 /////////////
-// DEFINES //
-/////////////
-#define NUM_LIGHTS 5
-
-
-/////////////
 // GLOBALS //
 /////////////
 Texture2D shaderTexture;
 SamplerState SampleType;
 
-cbuffer LightColorBuffer
+cbuffer LightBuffer
 {
-	float4 diffuseColor[NUM_LIGHTS];
+	float4 ambientColor;
+	float4 diffuseColor;
+	float3 lightDirection;
+	float specularPower;
+	float4 specularColor;
 };
 
 
@@ -29,12 +27,9 @@ struct PixelInputType
 	float4 position : SV_POSITION;
 	float2 tex : TEXCOORD0;
 	float3 normal : NORMAL;
-	float3 lightPos1 : TEXCOORD1;
-	float3 lightPos2 : TEXCOORD2;
-	float3 lightPos3 : TEXCOORD3;
-	float3 lightPos4 : TEXCOORD4;
-	float3 lightPos5 : TEXCOORD5;
+	float3 viewDirection : TEXCOORD1;
 };
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Pixel Shader
@@ -42,28 +37,48 @@ struct PixelInputType
 float4 LightPixelShader(PixelInputType input) : SV_TARGET
 {
 	float4 textureColor;
-	float lightIntensity1, lightIntensity2, lightIntensity3, lightIntensity4, lightIntensity5;
-	float4 color, color1, color2, color3, color4, color5;
+	float3 lightDir;
+	float lightIntensity;
+	float4 color;
+	float3 reflection;
+	float4 specular;
 
-	// Calculate the different amounts of light on this pixel based on the positions of the lights.
-	lightIntensity1 = saturate(dot(input.normal, input.lightPos1));
-	lightIntensity2 = saturate(dot(input.normal, input.lightPos2));
-	lightIntensity3 = saturate(dot(input.normal, input.lightPos3));
-	lightIntensity4 = saturate(dot(input.normal, input.lightPos4));
-	lightIntensity5 = saturate(dot(input.normal, input.lightPos5));
 
-	// Determine the diffuse color amount of each of the four lights.
-	color1 = diffuseColor[0] * lightIntensity1;
-	color2 = diffuseColor[1] * lightIntensity2;
-	color3 = diffuseColor[2] * lightIntensity3;
-	color4 = diffuseColor[3] * lightIntensity4;
-	color5 = diffuseColor[4] * lightIntensity5;
-
-	// Sample the texture pixel at this location.
+	// Sample the pixel color from the texture using the sampler at this texture coordinate location.
 	textureColor = shaderTexture.Sample(SampleType, input.tex);
 
-	// Multiply the texture pixel by the combination of all four light colors to get the final result.
-	color = saturate(color1 + color2 + color3 + color4 + color5) * textureColor;
+	// Set the default output color to the ambient light value for all pixels.
+	color = ambientColor;
+
+	// Initialize the specular color.
+	specular = float4(0.0f, 0.0f, 0.0f, 0.0f);
+
+	// Invert the light direction for calculations.
+	lightDir = -lightDirection;
+
+	// Calculate the amount of light on this pixel.
+	lightIntensity = saturate(dot(input.normal, lightDir));
+
+	if (lightIntensity > 0.0f)
+	{
+		// Determine the final diffuse color based on the diffuse color and the amount of light intensity.
+		color += (diffuseColor * lightIntensity);
+
+		// Saturate the ambient and diffuse color.
+		color = saturate(color);
+
+		// Calculate the reflection vector based on the light intensity, normal vector, and light direction.
+		reflection = normalize(2 * lightIntensity * input.normal - lightDir);
+
+		// Determine the amount of specular light based on the reflection vector, viewing direction, and specular power.
+		specular = pow(saturate(dot(reflection, input.viewDirection)), specularPower);
+	}
+
+	// Multiply the texture pixel and the input color to get the textured result.
+	color = color * textureColor;
+
+	// Add the specular component last to the output color.
+	color = saturate(color + specular);
 
 	return color;
 }

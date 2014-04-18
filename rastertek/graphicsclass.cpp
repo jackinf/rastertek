@@ -7,13 +7,12 @@
 GraphicsClass::GraphicsClass()
 {
 	m_D3D = 0;
-	m_Camera = 0;
-	m_GroundModel = 0;
-	m_CubeModel = 0;
+	m_ShaderManager = 0;
 	m_Light = 0;
-	m_ProjectionShader = 0;
-	m_ProjectionTexture = 0;
-	m_ViewPoint = 0;
+	m_Camera = 0;
+	m_Model1 = 0;
+	m_Model2 = 0;
+	m_Model3 = 0;
 }
 
 
@@ -31,7 +30,6 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 {
 	bool result;
 
-
 	// Create the Direct3D object.
 	m_D3D = new D3DClass;
 	if (!m_D3D)
@@ -47,6 +45,21 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
+	// Create the shader manager object.
+	m_ShaderManager = new ShaderManagerClass;
+	if (!m_ShaderManager)
+	{
+		return false;
+	}
+
+	// Initialize the shader manager object.
+	result = m_ShaderManager->Initialize(m_D3D->GetDevice(), hwnd);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the shader manager object.", L"Error", MB_OK);
+		return false;
+	}
+
 	// Create the camera object.
 	m_Camera = new CameraClass;
 	if (!m_Camera)
@@ -54,40 +67,8 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
-	// Set the initial position and rotation of the camera.
-	m_Camera->SetPosition(0.0f, 7.0f, -10.0f);
-	m_Camera->SetRotation(35.0f, 0.0f, 0.0f);
-
-	// Create the ground model object.
-	m_GroundModel = new ModelClass;
-	if (!m_GroundModel)
-	{
-		return false;
-	}
-
-	// Initialize the ground model object.
-	result = m_GroundModel->Initialize(m_D3D->GetDevice(), "../Engine/data/floor.txt", L"../Engine/data/stone01.dds");
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize the ground model object.", L"Error", MB_OK);
-		return false;
-	}
-
-
-	// Create the cube model object.
-	m_CubeModel = new ModelClass;
-	if (!m_CubeModel)
-	{
-		return false;
-	}
-
-	// Initialize the cube model object.
-	result = m_CubeModel->Initialize(m_D3D->GetDevice(), "../Engine/data/cube.txt", L"../Engine/data/seafloor.dds");
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize the cube model object.", L"Error", MB_OK);
-		return false;
-	}
+	// Set the initial position of the camera.
+	m_Camera->SetPosition(0.0f, 0.0f, -10.0f);
 
 	// Create the light object.
 	m_Light = new LightClass;
@@ -99,79 +80,81 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	// Initialize the light object.
 	m_Light->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
 	m_Light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
-	m_Light->SetDirection(0.0f, -0.75f, 0.5f);
+	m_Light->SetDirection(0.0f, 0.0f, 1.0f);
+	m_Light->SetSpecularColor(1.0f, 1.0f, 1.0f, 1.0f);
+	m_Light->SetSpecularPower(64.0f);
 
-	// Create the projection shader object.
-	m_ProjectionShader = new ProjectionShaderClass;
-	if (!m_ProjectionShader)
+	// Create the model object.
+	m_Model1 = new ModelClass;
+	if (!m_Model1)
 	{
 		return false;
 	}
 
-	// Initialize the projection shader object.
-	result = m_ProjectionShader->Initialize(m_D3D->GetDevice(), hwnd);
+	// Initialize the model object.
+	result = m_Model1->Initialize(m_D3D->GetDevice(), "../Engine/data/cube.txt", L"../Engine/data/seafloor.dds");
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize the projection shader object.", L"Error", MB_OK);
+		MessageBox(hwnd, L"Could not initialize the first model object.", L"Error", MB_OK);
 		return false;
 	}
 
-	// Create the projection texture object.
-	m_ProjectionTexture = new TextureClass;
-	if (!m_ProjectionTexture)
+	// Create the second model object.
+	m_Model2 = new ModelClass;
+	if (!m_Model2)
 	{
 		return false;
 	}
 
-	// Initialize the projection texture object.
-	result = m_ProjectionTexture->Initialize(m_D3D->GetDevice(), L"../Engine/data/watson.dds");
+	// Initialize the second model object.
+	result = m_Model2->Initialize(m_D3D->GetDevice(), "../Engine/data/cube.txt", L"../Engine/data/metal001.dds");
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize the projection texture object.", L"Error", MB_OK);
+		MessageBox(hwnd, L"Could not initialize the second model object.", L"Error", MB_OK);
 		return false;
 	}
 
-	// Create the view point object.
-	m_ViewPoint = new ViewPointClass;
-	if (!m_ViewPoint)
+	// Create the third bump model object for models with normal maps and related vectors.
+	m_Model3 = new BumpModelClass;
+	if (!m_Model3)
 	{
 		return false;
 	}
 
-	// Initialize the view point object.
-	m_ViewPoint->SetPosition(-2.0f, 3.0f, -2.0f);
-	m_ViewPoint->SetLookAt(0.0f, 0.0f, 0.0f);
-	m_ViewPoint->SetProjectionParameters((float)(D3DX_PI / 2.0f), 1.0f, 0.1f, 100.0f);
-	m_ViewPoint->GenerateViewMatrix();
-	m_ViewPoint->GenerateProjectionMatrix();
+	// Initialize the bump model object.
+	result = m_Model3->Initialize(m_D3D->GetDevice(), "../Engine/data/cube.txt", L"../Engine/data/stone01.dds",
+		L"../Engine/data/watson.dds");
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the third model object.", L"Error", MB_OK);
+		return false;
+	}
 
 	return true;
 }
 
-
 void GraphicsClass::Shutdown()
 {
-	// Release the view point object.
-	if (m_ViewPoint)
+	// Release the model objects.
+	if (m_Model1)
 	{
-		delete m_ViewPoint;
-		m_ViewPoint = 0;
+		m_Model1->Shutdown();
+		delete m_Model1;
+		m_Model1 = 0;
 	}
 
-	// Release the projection texture object.
-	if (m_ProjectionTexture)
+	if (m_Model2)
 	{
-		m_ProjectionTexture->Shutdown();
-		delete m_ProjectionTexture;
-		m_ProjectionTexture = 0;
+		m_Model2->Shutdown();
+		delete m_Model2;
+		m_Model2 = 0;
 	}
 
-	// Release the projection shader object.
-	if (m_ProjectionShader)
+	if (m_Model3)
 	{
-		m_ProjectionShader->Shutdown();
-		delete m_ProjectionShader;
-		m_ProjectionShader = 0;
+		m_Model3->Shutdown();
+		delete m_Model3;
+		m_Model3 = 0;
 	}
 
 	// Release the light object.
@@ -181,27 +164,19 @@ void GraphicsClass::Shutdown()
 		m_Light = 0;
 	}
 
-	// Release the cube model object.
-	if (m_CubeModel)
-	{
-		m_CubeModel->Shutdown();
-		delete m_CubeModel;
-		m_CubeModel = 0;
-	}
-
-	// Release the ground model object.
-	if (m_GroundModel)
-	{
-		m_GroundModel->Shutdown();
-		delete m_GroundModel;
-		m_GroundModel = 0;
-	}
-
 	// Release the camera object.
 	if (m_Camera)
 	{
 		delete m_Camera;
 		m_Camera = 0;
+	}
+
+	// Release the shader manager object.
+	if (m_ShaderManager)
+	{
+		m_ShaderManager->Shutdown();
+		delete m_ShaderManager;
+		m_ShaderManager = 0;
 	}
 
 	// Release the D3D object.
@@ -215,14 +190,21 @@ void GraphicsClass::Shutdown()
 	return;
 }
 
-
 bool GraphicsClass::Frame()
 {
 	bool result;
+	static float rotation = 0.0f;
 
+
+	// Update the rotation variable each frame.
+	rotation += (float)D3DX_PI * 0.005f;
+	if (rotation > 360.0f)
+	{
+		rotation -= 360.0f;
+	}
 
 	// Render the graphics scene.
-	result = Render();
+	result = Render(rotation);
 	if (!result)
 	{
 		return false;
@@ -231,12 +213,11 @@ bool GraphicsClass::Frame()
 	return true;
 }
 
-
-bool GraphicsClass::Render()
+bool GraphicsClass::Render(float rotation)
 {
-	D3DXMATRIX worldMatrix, viewMatrix, projectionMatrix;
-	D3DXMATRIX viewMatrix2, projectionMatrix2;
+	D3DXMATRIX worldMatrix, viewMatrix, projectionMatrix, translateMatrix;
 	bool result;
+
 
 	// Clear the buffers to begin the scene.
 	m_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
@@ -249,33 +230,47 @@ bool GraphicsClass::Render()
 	m_Camera->GetViewMatrix(viewMatrix);
 	m_D3D->GetProjectionMatrix(projectionMatrix);
 
-	// Get the view and projection matrices from the view point object.
-	m_ViewPoint->GetViewMatrix(viewMatrix2);
-	m_ViewPoint->GetProjectionMatrix(projectionMatrix2);
+	// Setup the rotation and translation of the first model.
+	D3DXMatrixRotationY(&worldMatrix, rotation);
+	D3DXMatrixTranslation(&translateMatrix, -3.5f, 0.0f, 0.0f);
+	D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
 
-	// Setup the translation for the ground model.
-	D3DXMatrixTranslation(&worldMatrix, 0.0f, 1.0f, 0.0f);
-
-	// Render the ground model using the projection shader.
-	m_GroundModel->Render(m_D3D->GetDeviceContext());
-	result = m_ProjectionShader->Render(m_D3D->GetDeviceContext(), m_GroundModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-		m_GroundModel->GetTexture(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Light->GetDirection(),
-		viewMatrix2, projectionMatrix2, m_ProjectionTexture->GetTexture());
+	// Render the first model using the texture shader.
+	m_Model1->Render(m_D3D->GetDeviceContext());
+	result = m_ShaderManager->RenderTextureShader(m_D3D->GetDeviceContext(), m_Model1->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+		m_Model1->GetTexture());
 	if (!result)
 	{
 		return false;
 	}
 
-	// Reset the world matrix and setup the translation for the cube model.
+	// Setup the rotation and translation of the second model.
 	m_D3D->GetWorldMatrix(worldMatrix);
-	D3DXMatrixTranslation(&worldMatrix, 0.0f, 2.0f, 0.0f);
-	//D3DXMatrixRotationY(&worldMatrix, rotation);
+	D3DXMatrixRotationY(&worldMatrix, rotation);
+	D3DXMatrixTranslation(&translateMatrix, 0.0f, 0.0f, 0.0f);
+	D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
 
-	// Render the cube model using the projection shader.
-	m_CubeModel->Render(m_D3D->GetDeviceContext());
-	result = m_ProjectionShader->Render(m_D3D->GetDeviceContext(), m_CubeModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-		m_CubeModel->GetTexture(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(), m_Light->GetDirection(),
-		viewMatrix2, projectionMatrix2, m_ProjectionTexture->GetTexture());
+	// Render the second model using the light shader.
+	m_Model2->Render(m_D3D->GetDeviceContext());
+	result = m_ShaderManager->RenderLightShader(m_D3D->GetDeviceContext(), m_Model2->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+		m_Model2->GetTexture(), m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(),
+		m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
+	if (!result)
+	{
+		return false;
+	}
+
+	// Setup the rotation and translation of the third model.
+	m_D3D->GetWorldMatrix(worldMatrix);
+	D3DXMatrixRotationY(&worldMatrix, rotation);
+	D3DXMatrixTranslation(&translateMatrix, 3.5f, 0.0f, 0.0f);
+	D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
+
+	// Render the third model using the bump map shader.
+	m_Model3->Render(m_D3D->GetDeviceContext());
+	result = m_ShaderManager->RenderBumpMapShader(m_D3D->GetDeviceContext(), m_Model3->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+		m_Model3->GetColorTexture(), m_Model3->GetNormalMapTexture(), m_Light->GetDirection(),
+		m_Light->GetDiffuseColor());
 	if (!result)
 	{
 		return false;

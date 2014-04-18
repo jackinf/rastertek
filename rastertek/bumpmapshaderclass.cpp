@@ -3,6 +3,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "bumpmapshaderclass.h"
 
+
 BumpMapShaderClass::BumpMapShaderClass()
 {
 	m_vertexShader = 0;
@@ -23,6 +24,7 @@ BumpMapShaderClass::~BumpMapShaderClass()
 {
 }
 
+
 bool BumpMapShaderClass::Initialize(ID3D11Device* device, HWND hwnd)
 {
 	bool result;
@@ -38,6 +40,7 @@ bool BumpMapShaderClass::Initialize(ID3D11Device* device, HWND hwnd)
 	return true;
 }
 
+
 void BumpMapShaderClass::Shutdown()
 {
 	// Shutdown the vertex and pixel shaders as well as the related objects.
@@ -46,16 +49,17 @@ void BumpMapShaderClass::Shutdown()
 	return;
 }
 
+
 bool BumpMapShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix,
-	D3DXMATRIX projectionMatrix, ID3D11ShaderResourceView** textureArray, D3DXVECTOR3 lightDirection,
-	D3DXVECTOR4 diffuseColor)
+	D3DXMATRIX projectionMatrix, ID3D11ShaderResourceView* colorTexture, ID3D11ShaderResourceView* normalMapTexture,
+	D3DXVECTOR3 lightDirection, D3DXVECTOR4 diffuseColor)
 {
 	bool result;
 
 
 	// Set the shader parameters that it will use for rendering.
-	result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, textureArray, lightDirection,
-		diffuseColor);
+	result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, colorTexture, normalMapTexture,
+		lightDirection, diffuseColor);
 	if (!result)
 	{
 		return false;
@@ -66,6 +70,7 @@ bool BumpMapShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCou
 
 	return true;
 }
+
 
 bool BumpMapShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* vsFilename, WCHAR* psFilename)
 {
@@ -78,6 +83,7 @@ bool BumpMapShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR
 	D3D11_BUFFER_DESC matrixBufferDesc;
 	D3D11_SAMPLER_DESC samplerDesc;
 	D3D11_BUFFER_DESC lightBufferDesc;
+
 
 	// Initialize the pointers this function will use to null.
 	errorMessage = 0;
@@ -253,6 +259,7 @@ bool BumpMapShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR
 	return true;
 }
 
+
 void BumpMapShaderClass::ShutdownShader()
 {
 	// Release the light constant buffer.
@@ -300,6 +307,7 @@ void BumpMapShaderClass::ShutdownShader()
 	return;
 }
 
+
 void BumpMapShaderClass::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hwnd, WCHAR* shaderFilename)
 {
 	char* compileErrors;
@@ -335,16 +343,18 @@ void BumpMapShaderClass::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND
 	return;
 }
 
+
 bool BumpMapShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, D3DXMATRIX worldMatrix,
 	D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix,
-	ID3D11ShaderResourceView** textureArray, D3DXVECTOR3 lightDirection,
-	D3DXVECTOR4 diffuseColor)
+	ID3D11ShaderResourceView* colorTexture, ID3D11ShaderResourceView* normalMapTexture,
+	D3DXVECTOR3 lightDirection, D3DXVECTOR4 diffuseColor)
 {
 	HRESULT result;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	MatrixBufferType* dataPtr;
 	unsigned int bufferNumber;
 	LightBufferType* dataPtr2;
+
 
 	// Transpose the matrices to prepare them for the shader.
 	D3DXMatrixTranspose(&worldMatrix, &worldMatrix);
@@ -375,8 +385,9 @@ bool BumpMapShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext,
 	// Now set the matrix constant buffer in the vertex shader with the updated values.
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_matrixBuffer);
 
-	// Set shader texture array resource in the pixel shader.
-	deviceContext->PSSetShaderResources(0, 2, textureArray);
+	// Set shader texture resources in the pixel shader.
+	deviceContext->PSSetShaderResources(0, 1, &colorTexture);
+	deviceContext->PSSetShaderResources(1, 1, &normalMapTexture);
 
 	// Lock the light constant buffer so it can be written to.
 	result = deviceContext->Map(m_lightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
@@ -403,6 +414,7 @@ bool BumpMapShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext,
 
 	return true;
 }
+
 
 void BumpMapShaderClass::RenderShader(ID3D11DeviceContext* deviceContext, int indexCount)
 {
