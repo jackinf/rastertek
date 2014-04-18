@@ -439,6 +439,12 @@
     <FxCompile Include="..\Engine\shadowvs.hlsl">
       <Filter>Engine</Filter>
     </FxCompile>
+    <FxCompile Include="..\Engine\projectionps.hlsl">
+      <Filter>Engine</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Engine\projectionvs.hlsl">
+      <Filter>Engine</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\Engine\data\stone01.dds">
