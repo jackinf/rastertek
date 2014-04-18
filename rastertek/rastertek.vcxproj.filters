@@ -177,6 +177,15 @@
     <ClCompile Include="bumpmodelclass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="glowmapshaderclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="glowshaderclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="applicationclass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="systemclass.h">
@@ -335,6 +344,15 @@
     <ClInclude Include="bumpmodelclass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="glowmapshaderclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="glowshaderclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="applicationclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="pscolor.hlsl">
@@ -477,6 +495,18 @@
     </FxCompile>
     <FxCompile Include="..\Engine\softshadowps.hlsl" />
     <FxCompile Include="..\Engine\softshadowvs.hlsl" />
+    <FxCompile Include="..\Engine\glowmapps.hlsl">
+      <Filter>Engine</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Engine\glowmapvs.hlsl">
+      <Filter>Engine</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Engine\glowps.hlsl">
+      <Filter>Engine</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Engine\glowvs.hlsl">
+      <Filter>Engine</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\Engine\data\stone01.dds">
