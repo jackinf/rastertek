@@ -51,13 +51,13 @@ bool SystemClass::Initialize()
 		return false;
 	}
 
-	m_Application = new ApplicationClass;
+	m_Application = new GraphicsClass;
 	if (!m_Application)
 	{
 		return false;
 	}
 
-	result = m_Application->Initialize(m_hinstance, m_hwnd, screenWidth, screenHeight);
+	result = m_Application->Initialize(screenWidth, screenHeight, m_hwnd);
 	if (!result)
 	{
 		return false;
@@ -204,7 +204,7 @@ bool SystemClass::Frame()
 	m_Position->GetRotation(rotX, rotY, rotZ);
 
 	// Do the frame processing for the graphics object.
-	result = m_Application->Frame();
+	result = m_Application->Frame(posX, posY, posZ, rotX, rotY, rotZ, m_Timer->GetTime());
 	if (!result)
 	{
 		return false;

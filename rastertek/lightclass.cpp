@@ -48,24 +48,6 @@ void LightClass::SetLookAt(float x, float y, float z)
 	return;
 }
 
-void LightClass::SetDirection(float x, float y, float z)
-{
-	m_direction = D3DXVECTOR3(x, y, z);
-	return;
-}
-
-void LightClass::SetSpecularColor(float red, float green, float blue, float alpha)
-{
-	m_specularColor = D3DXVECTOR4(red, green, blue, alpha);
-	return;
-}
-
-
-void LightClass::SetSpecularPower(float power)
-{
-	m_specularPower = power;
-	return;
-}
 
 D3DXVECTOR4 LightClass::GetAmbientColor()
 {
@@ -102,22 +84,6 @@ void LightClass::GenerateViewMatrix()
 }
 
 
-void LightClass::GenerateProjectionMatrix(float screenDepth, float screenNear)
-{
-	float fieldOfView, screenAspect;
-
-
-	// Setup field of view and screen aspect for a square light source.
-	fieldOfView = (float)D3DX_PI / 2.0f;
-	screenAspect = 1.0f;
-
-	// Create the projection matrix for the light.
-	D3DXMatrixPerspectiveFovLH(&m_projectionMatrix, fieldOfView, screenAspect, screenNear, screenDepth);
-
-	return;
-}
-
-
 void LightClass::GetViewMatrix(D3DXMATRIX& viewMatrix)
 {
 	viewMatrix = m_viewMatrix;
@@ -125,24 +91,30 @@ void LightClass::GetViewMatrix(D3DXMATRIX& viewMatrix)
 }
 
 
-void LightClass::GetProjectionMatrix(D3DXMATRIX& projectionMatrix)
+void LightClass::GenerateOrthoMatrix(float width, float depthPlane, float nearPlane)
 {
-	projectionMatrix = m_projectionMatrix;
+	// Create the orthographic matrix for the light.
+	D3DXMatrixOrthoLH(&m_orthoMatrix, width, width, nearPlane, depthPlane);
+
 	return;
 }
+
+
+void LightClass::GetOrthoMatrix(D3DXMATRIX& orthoMatrix)
+{
+	orthoMatrix = m_orthoMatrix;
+	return;
+}
+
+
+void LightClass::SetDirection(float x, float y, float z)
+{
+	m_direction = D3DXVECTOR3(x, y, z);
+	return;
+}
+
 
 D3DXVECTOR3 LightClass::GetDirection()
 {
 	return m_direction;
-}
-
-D3DXVECTOR4 LightClass::GetSpecularColor()
-{
-	return m_specularColor;
-}
-
-
-float LightClass::GetSpecularPower()
-{
-	return m_specularPower;
 }
