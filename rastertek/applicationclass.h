@@ -10,21 +10,31 @@
 ///////////////////////
 #include "inputclass.h"
 #include "d3dclass.h"
+#include "timerclass.h"
+#include "positionclass.h"
 #include "cameraclass.h"
-#include "modelclass.h"
-#include "textureshaderclass.h"
-#include "lightshaderclass.h"
 #include "lightclass.h"
-#include "textclass.h"
-#include "bitmapclass.h"
+#include "modelclass.h"
+#include "treeclass.h"
+#include "rendertextureclass.h"
+#include "depthshaderclass.h"
+#include "transparentdepthshaderclass.h"
+#include "shadowshaderclass.h"
+
 
 /////////////
 // GLOBALS //
 /////////////
-const bool FULL_SCREEN = true;
+const bool FULL_SCREEN = false;
 const bool VSYNC_ENABLED = true;
 const float SCREEN_DEPTH = 1000.0f;
 const float SCREEN_NEAR = 0.1f;
+
+const int SHADOWMAP_WIDTH = 1024;
+const int SHADOWMAP_HEIGHT = 1024;
+const float SHADOWMAP_DEPTH = 50.0f;
+const float SHADOWMAP_NEAR = 1.0f;
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: ApplicationClass
@@ -41,23 +51,24 @@ public:
 	bool Frame();
 
 private:
-	bool HandleInput();
+	bool HandleMovementInput(float);
+	void UpdateLighting();
 	bool Render();
-	void TestIntersection(int, int);
-	bool RaySphereIntersect(D3DXVECTOR3, D3DXVECTOR3, float);
+	bool RenderSceneToTexture();
 
 private:
 	InputClass* m_Input;
-	D3DClass* m_D3D;
+	D3DClass* m_Direct3D;
+	TimerClass* m_Timer;
+	PositionClass* m_Position;
 	CameraClass* m_Camera;
-	ModelClass* m_Model;
-	TextureShaderClass* m_TextureShader;
-	LightShaderClass* m_LightShader;
 	LightClass* m_Light;
-	TextClass* m_Text;
-	BitmapClass* m_Bitmap;
-	bool m_beginCheck;
-	int m_screenWidth, m_screenHeight;
+	ModelClass* m_GroundModel;
+	TreeClass* m_Tree;
+	RenderTextureClass* m_RenderTexture;
+	DepthShaderClass* m_DepthShader;
+	TransparentDepthShaderClass* m_TransparentDepthShader;
+	ShadowShaderClass* m_ShadowShader;
 };
 
 #endif

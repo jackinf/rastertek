@@ -7,14 +7,17 @@
 ApplicationClass::ApplicationClass()
 {
 	m_Input = 0;
-	m_D3D = 0;
+	m_Direct3D = 0;
+	m_Timer = 0;
+	m_Position = 0;
 	m_Camera = 0;
-	m_Model = 0;
-	m_TextureShader = 0;
-	m_LightShader = 0;
 	m_Light = 0;
-	m_Text = 0;
-	m_Bitmap = 0;
+	m_GroundModel = 0;
+	m_Tree = 0;
+	m_RenderTexture = 0;
+	m_DepthShader = 0;
+	m_TransparentDepthShader = 0;
+	m_ShadowShader = 0;
 }
 
 
@@ -30,14 +33,9 @@ ApplicationClass::~ApplicationClass()
 bool ApplicationClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeight)
 {
 	bool result;
-	D3DXMATRIX baseViewMatrix;
 
 
-	// Store the screen width and height.
-	m_screenWidth = screenWidth;
-	m_screenHeight = screenHeight;
-
-	// Create the input object.
+	// Create the input object.  The input object will be used to handle reading the keyboard and mouse input from the user.
 	m_Input = new InputClass;
 	if (!m_Input)
 	{
@@ -53,74 +51,50 @@ bool ApplicationClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidt
 	}
 
 	// Create the Direct3D object.
-	m_D3D = new D3DClass;
-	if (!m_D3D)
+	m_Direct3D = new D3DClass;
+	if (!m_Direct3D)
 	{
 		return false;
 	}
 
 	// Initialize the Direct3D object.
-	result = m_D3D->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR);
+	result = m_Direct3D->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR);
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize Direct3D.", L"Error", MB_OK);
+		MessageBox(hwnd, L"Could not initialize DirectX 11.", L"Error", MB_OK);
 		return false;
 	}
+
+	// Create the timer object.
+	m_Timer = new TimerClass;
+	if (!m_Timer)
+	{
+		return false;
+	}
+
+	// Initialize the timer object.
+	result = m_Timer->Initialize();
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the timer object.", L"Error", MB_OK);
+		return false;
+	}
+
+	// Create the position object.
+	m_Position = new PositionClass;
+	if (!m_Position)
+	{
+		return false;
+	}
+
+	// Set the initial position.
+	m_Position->SetPosition(0.0f, 7.0f, -11.0f);
+	m_Position->SetRotation(20.0f, 0.0f, 0.0f);
 
 	// Create the camera object.
 	m_Camera = new CameraClass;
 	if (!m_Camera)
 	{
-		return false;
-	}
-
-	// Set the initial position of the camera.
-	m_Camera->SetPosition(0.0f, 0.0f, -10.0f);
-	m_Camera->Render();
-	m_Camera->GetViewMatrix(baseViewMatrix);
-
-	// Create the model object.
-	m_Model = new ModelClass;
-	if (!m_Model)
-	{
-		return false;
-	}
-
-	// Initialize the model object.
-	result = m_Model->Initialize(m_D3D->GetDevice(), "../Engine/data/sphere.txt", L"../Engine/data/watson.dds");
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
-		return false;
-	}
-
-	// Create the texture shader object.
-	m_TextureShader = new TextureShaderClass;
-	if (!m_TextureShader)
-	{
-		return false;
-	}
-
-	// Initialize the texture shader object.
-	result = m_TextureShader->Initialize(m_D3D->GetDevice(), hwnd);
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize the texture shader object.", L"Error", MB_OK);
-		return false;
-	}
-
-	// Create the light shader object.
-	m_LightShader = new LightShaderClass;
-	if (!m_LightShader)
-	{
-		return false;
-	}
-
-	// Initialize the light shader object.
-	result = m_LightShader->Initialize(m_D3D->GetDevice(), hwnd);
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize the light shader object.", L"Error", MB_OK);
 		return false;
 	}
 
@@ -132,60 +106,154 @@ bool ApplicationClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidt
 	}
 
 	// Initialize the light object.
-	m_Light->SetDirection(0.0f, 0.0f, 1.0f);
+	m_Light->GenerateOrthoMatrix(15.0f, 15.0f, SHADOWMAP_DEPTH, SHADOWMAP_NEAR);
 
-	// Create the text object.
-	m_Text = new TextClass;
-	if (!m_Text)
+	// Create the ground model object.
+	m_GroundModel = new ModelClass;
+	if (!m_GroundModel)
 	{
 		return false;
 	}
 
-	// Initialize the text object.
-	result = m_Text->Initialize(m_D3D->GetDevice(), m_D3D->GetDeviceContext(), hwnd, screenWidth, screenHeight, baseViewMatrix);
+	// Initialize the ground model object.
+	result = m_GroundModel->Initialize(m_Direct3D->GetDevice(), "../Engine/data/plane01.txt", L"../Engine/data/seafloor.dds", 2.0f);
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize the text object.", L"Error", MB_OK);
+		MessageBox(hwnd, L"Could not initialize the ground model object.", L"Error", MB_OK);
 		return false;
 	}
 
-	// Create the bitmap object.
-	m_Bitmap = new BitmapClass;
-	if (!m_Bitmap)
+	// Set the position for the ground model.
+	m_GroundModel->SetPosition(0.0f, 1.0f, 0.0f);
+
+	// Create the tree object.
+	m_Tree = new TreeClass;
+	if (!m_Tree)
 	{
 		return false;
 	}
 
-	// Initialize the bitmap object.
-	result = m_Bitmap->Initialize(m_D3D->GetDevice(), screenWidth, screenHeight, L"../Engine/data/mouse.dds", 32, 32);
+	// Initialize the shadow shader object.
+	result = m_Tree->Initialize(m_Direct3D->GetDevice(), "../Engine/data/trees/trunk001.txt", L"../Engine/data/trees/trunk001.dds",
+		"../Engine/data/trees/leaf001.txt", L"../Engine/data/trees/leaf001.dds", 0.1f);
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize the bitmap object.", L"Error", MB_OK);
+		MessageBox(hwnd, L"Could not initialize the tree object.", L"Error", MB_OK);
 		return false;
 	}
 
-	// Initialize that the user has not clicked on the screen to try an intersection test yet.
-	m_beginCheck = false;
+	// Set the position for the tree model.
+	m_Tree->SetPosition(0.0f, 1.0f, 0.0f);
 
-	return true;
+	// Create the render to texture object.
+	m_RenderTexture = new RenderTextureClass;
+	if (!m_RenderTexture)
+	{
+		return false;
+	}
+
+	// Initialize the render to texture object.
+	result = m_RenderTexture->Initialize(m_Direct3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SHADOWMAP_DEPTH, SHADOWMAP_NEAR);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the render to texture object.", L"Error", MB_OK);
+		return false;
+	}
+
+	// Create the depth shader object.
+	m_DepthShader = new DepthShaderClass;
+	if (!m_DepthShader)
+	{
+		return false;
+	}
+
+	// Initialize the depth shader object.
+	result = m_DepthShader->Initialize(m_Direct3D->GetDevice(), hwnd);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the depth shader object.", L"Error", MB_OK);
+		return false;
+	}
+
+	// Create the transparent depth shader object.
+	m_TransparentDepthShader = new TransparentDepthShaderClass;
+	if (!m_TransparentDepthShader)
+	{
+		return false;
+	}
+
+	// Initialize the transparent depth shader object.
+	result = m_TransparentDepthShader->Initialize(m_Direct3D->GetDevice(), hwnd);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the transparent depth shader object.", L"Error", MB_OK);
+		return false;
+	}
+
+	// Create the transparent depth shader object.
+	m_TransparentDepthShader = new TransparentDepthShaderClass;
+	if (!m_TransparentDepthShader)
+	{
+		return false;
+	}
+
+	// Initialize the transparent depth shader object.
+	result = m_TransparentDepthShader->Initialize(m_Direct3D->GetDevice(), hwnd);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the transparent depth shader object.", L"Error", MB_OK);
+		return false;
+	}
 }
 
 void ApplicationClass::Shutdown()
 {
-	// Release the bitmap object.
-	if (m_Bitmap)
+	// Release the shadow shader object.
+	if (m_ShadowShader)
 	{
-		m_Bitmap->Shutdown();
-		delete m_Bitmap;
-		m_Bitmap = 0;
+		m_ShadowShader->Shutdown();
+		delete m_ShadowShader;
+		m_ShadowShader = 0;
 	}
 
-	// Release the text object.
-	if (m_Text)
+	// Release the transparent depth shader object.
+	if (m_TransparentDepthShader)
 	{
-		m_Text->Shutdown();
-		delete m_Text;
-		m_Text = 0;
+		m_TransparentDepthShader->Shutdown();
+		delete m_TransparentDepthShader;
+		m_TransparentDepthShader = 0;
+	}
+
+	// Release the depth shader object.
+	if (m_DepthShader)
+	{
+		m_DepthShader->Shutdown();
+		delete m_DepthShader;
+		m_DepthShader = 0;
+	}
+
+	// Release the render to texture object.
+	if (m_RenderTexture)
+	{
+		m_RenderTexture->Shutdown();
+		delete m_RenderTexture;
+		m_RenderTexture = 0;
+	}
+
+	// Release the tree object.
+	if (m_Tree)
+	{
+		m_Tree->Shutdown();
+		delete m_Tree;
+		m_Tree = 0;
+	}
+
+	// Release the ground model object.
+	if (m_GroundModel)
+	{
+		m_GroundModel->Shutdown();
+		delete m_GroundModel;
+		m_GroundModel = 0;
 	}
 
 	// Release the light object.
@@ -195,30 +263,6 @@ void ApplicationClass::Shutdown()
 		m_Light = 0;
 	}
 
-	// Release the light shader object.
-	if (m_LightShader)
-	{
-		m_LightShader->Shutdown();
-		delete m_LightShader;
-		m_LightShader = 0;
-	}
-
-	// Release the texture shader object.
-	if (m_TextureShader)
-	{
-		m_TextureShader->Shutdown();
-		delete m_TextureShader;
-		m_TextureShader = 0;
-	}
-
-	// Release the model object.
-	if (m_Model)
-	{
-		m_Model->Shutdown();
-		delete m_Model;
-		m_Model = 0;
-	}
-
 	// Release the camera object.
 	if (m_Camera)
 	{
@@ -226,12 +270,26 @@ void ApplicationClass::Shutdown()
 		m_Camera = 0;
 	}
 
-	// Release the D3D object.
-	if (m_D3D)
+	// Release the position object.
+	if (m_Position)
 	{
-		m_D3D->Shutdown();
-		delete m_D3D;
-		m_D3D = 0;
+		delete m_Position;
+		m_Position = 0;
+	}
+
+	// Release the timer object.
+	if (m_Timer)
+	{
+		delete m_Timer;
+		m_Timer = 0;
+	}
+
+	// Release the Direct3D object.
+	if (m_Direct3D)
+	{
+		m_Direct3D->Shutdown();
+		delete m_Direct3D;
+		m_Direct3D = 0;
 	}
 
 	// Release the input object.
@@ -251,30 +309,10 @@ bool ApplicationClass::Frame()
 	bool result;
 
 
-	// Handle the input processing.
-	result = HandleInput();
-	if (!result)
-	{
-		return false;
-	}
+	// Update the system stats.
+	m_Timer->Frame();
 
-	// Render the graphics scene.
-	result = Render();
-	if (!result)
-	{
-		return false;
-	}
-
-	return true;
-}
-
-bool ApplicationClass::HandleInput()
-{
-	bool result;
-	int mouseX, mouseY;
-
-
-	// Do the input frame processing.
+	// Read the user input.
 	result = m_Input->Frame();
 	if (!result)
 	{
@@ -287,172 +325,226 @@ bool ApplicationClass::HandleInput()
 		return false;
 	}
 
-	// Check if the left mouse button has been pressed.
-	if (m_Input->IsLeftMouseButtonDown() == true)
+	// Do the frame input processing.
+	result = HandleMovementInput(m_Timer->GetTime());
+	if (!result)
 	{
-		// If they have clicked on the screen with the mouse then perform an intersection test.
-		if (m_beginCheck == false)
-		{
-			m_beginCheck = true;
-			m_Input->GetMouseLocation(mouseX, mouseY);
-			TestIntersection(mouseX, mouseY);
-		}
+		return false;
 	}
 
-	// Check if the left mouse button has been released.
-	if (m_Input->IsLeftMouseButtonDown() == false)
+	// Update the scene lighting.
+	UpdateLighting();
+
+	// Render the graphics.
+	result = Render();
+	if (!result)
 	{
-		m_beginCheck = false;
+		return false;
 	}
+
+	return result;
+}
+
+bool ApplicationClass::HandleMovementInput(float frameTime)
+{
+	bool keyDown;
+	float posX, posY, posZ, rotX, rotY, rotZ;
+
+
+	// Set the frame time for calculating the updated position.
+	m_Position->SetFrameTime(frameTime);
+
+	// Handle the input.
+	keyDown = m_Input->IsLeftPressed();
+	m_Position->TurnLeft(keyDown);
+
+	keyDown = m_Input->IsRightPressed();
+	m_Position->TurnRight(keyDown);
+
+	keyDown = m_Input->IsUpPressed();
+	m_Position->MoveForward(keyDown);
+
+	keyDown = m_Input->IsDownPressed();
+	m_Position->MoveBackward(keyDown);
+
+	keyDown = m_Input->IsAPressed();
+	m_Position->MoveUpward(keyDown);
+
+	keyDown = m_Input->IsZPressed();
+	m_Position->MoveDownward(keyDown);
+
+	keyDown = m_Input->IsPgUpPressed();
+	m_Position->LookUpward(keyDown);
+
+	keyDown = m_Input->IsPgDownPressed();
+	m_Position->LookDownward(keyDown);
+
+	// Get the view point position/rotation.
+	m_Position->GetPosition(posX, posY, posZ);
+	m_Position->GetRotation(rotX, rotY, rotZ);
+
+	// Set the position of the camera.
+	m_Camera->SetPosition(posX, posY, posZ);
+	m_Camera->SetRotation(rotX, rotY, rotZ);
 
 	return true;
 }
 
+void ApplicationClass::UpdateLighting()
+{
+	static float angle = 270.0f;
+	float radians;
+	static float offsetX = 9.0f;
+
+
+	// Update direction of the light.
+	angle -= 0.03f * m_Timer->GetTime();
+	if (angle < 90.0f)
+	{
+		angle = 270.0f;
+		offsetX = 9.0f;
+	}
+	radians = angle * 0.0174532925f;
+	m_Light->SetDirection(sinf(radians), cosf(radians), 0.0f);
+
+	// Update the lookat and position.
+	offsetX -= 0.003f * m_Timer->GetTime();
+	m_Light->SetPosition(0.0f + offsetX, 10.0f, 1.0f);
+	m_Light->SetLookAt(0.0f - offsetX, 0.0f, 2.0f);
+
+	return;
+}
+
 bool ApplicationClass::Render()
 {
-	D3DXMATRIX worldMatrix, viewMatrix, projectionMatrix, orthoMatrix, translateMatrix;
+	D3DXMATRIX worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix, lightOrthoMatrix;
+	D3DXVECTOR4 ambientColor, diffuseColor;
+	float posX, posY, posZ;
 	bool result;
-	int mouseX, mouseY;
 
 
-	// Clear the buffers to begin the scene.
-	m_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
+	// Render the depth of the scene to a texture.
+	result = RenderSceneToTexture();
+	if (!result)
+	{
+		return false;
+	}
+
+	// Clear the scene.
+	m_Direct3D->BeginScene(0.0f, 0.5f, 0.8f, 1.0f);
 
 	// Generate the view matrix based on the camera's position.
 	m_Camera->Render();
 
-	// Get the world, view, and projection matrices from the camera and d3d objects.
+	// Generate the light view matrix based on the light's position.
+	m_Light->GenerateViewMatrix();
+
+	// Get the matrices from the camera and d3d objects.
+	m_Direct3D->GetWorldMatrix(worldMatrix);
 	m_Camera->GetViewMatrix(viewMatrix);
-	m_D3D->GetWorldMatrix(worldMatrix);
-	m_D3D->GetProjectionMatrix(projectionMatrix);
-	m_D3D->GetOrthoMatrix(orthoMatrix);
+	m_Direct3D->GetProjectionMatrix(projectionMatrix);
 
-	// Translate to the location of the sphere.
-	D3DXMatrixTranslation(&translateMatrix, -5.0f, 1.0f, 5.0f);
-	D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
+	// Get the light's view and projection matrices from the light object.
+	m_Light->GetViewMatrix(lightViewMatrix);
+	m_Light->GetOrthoMatrix(lightOrthoMatrix);
 
-	// Render the model using the light shader.
-	m_Model->Render(m_D3D->GetDeviceContext());
-	result = m_LightShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, m_Model->GetTexture(), m_Light->GetDirection());
+	// Set the light color attributes.
+	diffuseColor = D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f);
+	ambientColor = D3DXVECTOR4(0.15f, 0.15f, 0.15f, 1.0f);
+
+	// Translate to the position of the ground model.
+	m_GroundModel->GetPosition(posX, posY, posZ);
+	D3DXMatrixTranslation(&worldMatrix, posX, posY, posZ);
+
+	// Render the ground model using the shadow shader.
+	m_GroundModel->Render(m_Direct3D->GetDeviceContext());
+	m_ShadowShader->Render(m_Direct3D->GetDeviceContext(), m_GroundModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix,
+		lightOrthoMatrix, m_GroundModel->GetTexture(), m_RenderTexture->GetShaderResourceView(), m_Light->GetDirection(),
+		ambientColor, diffuseColor);
+	m_Direct3D->GetWorldMatrix(worldMatrix);
+
+	// Translate to the position of the tree model.
+	m_Tree->GetPosition(posX, posY, posZ);
+	D3DXMatrixTranslation(&worldMatrix, posX, posY, posZ);
+
+	// Render the tree trunk.
+	m_Tree->RenderTrunk(m_Direct3D->GetDeviceContext());
+	m_ShadowShader->Render(m_Direct3D->GetDeviceContext(), m_Tree->GetTrunkIndexCount(), worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix,
+		lightOrthoMatrix, m_Tree->GetTrunkTexture(), m_RenderTexture->GetShaderResourceView(), m_Light->GetDirection(),
+		ambientColor, diffuseColor);
+
+	// Enable blending and render the tree leaves.
+	m_Direct3D->EnableAlphaBlending();
+	m_Tree->RenderLeaves(m_Direct3D->GetDeviceContext());
+	m_ShadowShader->Render(m_Direct3D->GetDeviceContext(), m_Tree->GetLeafIndexCount(), worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix,
+		lightOrthoMatrix, m_Tree->GetLeafTexture(), m_RenderTexture->GetShaderResourceView(), m_Light->GetDirection(),
+		ambientColor, diffuseColor);
+	m_Direct3D->DisableAlphaBlending();
+	m_Direct3D->GetWorldMatrix(worldMatrix);
+
+	// Present the rendered scene to the screen.
+	m_Direct3D->EndScene();
+
+	return true;
+}
+
+bool ApplicationClass::RenderSceneToTexture()
+{
+	D3DXMATRIX worldMatrix, lightViewMatrix, lightOrthoMatrix;
+	float posX, posY, posZ;
+	bool result;
+
+
+	// Set the render target to be the render to texture.
+	m_RenderTexture->SetRenderTarget(m_Direct3D->GetDeviceContext());
+
+	// Clear the render to texture.
+	m_RenderTexture->ClearRenderTarget(m_Direct3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 1.0f);
+
+	// Get the world matrix from the d3d object.
+	m_Direct3D->GetWorldMatrix(worldMatrix);
+
+	// Generate the light view matrix based on the light's position.
+	m_Light->GenerateViewMatrix();
+
+	// Get the view and orthographic matrices from the light object.
+	m_Light->GetViewMatrix(lightViewMatrix);
+	m_Light->GetOrthoMatrix(lightOrthoMatrix);
+
+	// Translate to the position of the tree.
+	m_Tree->GetPosition(posX, posY, posZ);
+	D3DXMatrixTranslation(&worldMatrix, posX, posY, posZ);
+
+	// Render the tree trunk with the depth shader.
+	m_Tree->RenderTrunk(m_Direct3D->GetDeviceContext());
+	m_DepthShader->Render(m_Direct3D->GetDeviceContext(), m_Tree->GetTrunkIndexCount(), worldMatrix, lightViewMatrix, lightOrthoMatrix);
+
+	// Render the tree leaves using the depth transparency shader.
+	m_Tree->RenderLeaves(m_Direct3D->GetDeviceContext());
+	result = m_TransparentDepthShader->Render(m_Direct3D->GetDeviceContext(), m_Tree->GetLeafIndexCount(), worldMatrix, lightViewMatrix,
+		lightOrthoMatrix, m_Tree->GetLeafTexture());
 	if (!result)
 	{
 		return false;
 	}
 
 	// Reset the world matrix.
-	m_D3D->GetWorldMatrix(worldMatrix);
+	m_Direct3D->GetWorldMatrix(worldMatrix);
 
-	// Turn off the Z buffer to begin all 2D rendering.
-	m_D3D->TurnZBufferOff();
+	// Translate to the position of the ground model.
+	m_GroundModel->GetPosition(posX, posY, posZ);
+	D3DXMatrixTranslation(&worldMatrix, posX, posY, posZ);
 
-	// Turn on alpha blending.
-	m_D3D->EnableAlphaBlending();
+	// Render the ground model with the depth shader.
+	m_GroundModel->Render(m_Direct3D->GetDeviceContext());
+	m_DepthShader->Render(m_Direct3D->GetDeviceContext(), m_GroundModel->GetIndexCount(), worldMatrix, lightViewMatrix, lightOrthoMatrix);
 
-	// Get the location of the mouse from the input object,
-	m_Input->GetMouseLocation(mouseX, mouseY);
+	// Reset the render target back to the original back buffer and not the render to texture anymore.
+	m_Direct3D->SetBackBufferRenderTarget();
 
-	// Render the mouse cursor with the texture shader.
-	result = m_Bitmap->Render(m_D3D->GetDeviceContext(), mouseX, mouseY);  if (!result) { return false; }
-	result = m_TextureShader->Render(m_D3D->GetDeviceContext(), m_Bitmap->GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix, m_Bitmap->GetTexture());
-
-	// Render the text strings.
-	result = m_Text->Render(m_D3D->GetDeviceContext(), worldMatrix, orthoMatrix);
-	if (!result)
-	{
-		return false;
-	}
-
-	// Turn of alpha blending.
-	m_D3D->DisableAlphaBlending();
-
-	// Turn the Z buffer back on now that all 2D rendering has completed.
-	m_D3D->TurnZBufferOn();
-
-	// Present the rendered scene to the screen.
-	m_D3D->EndScene();
+	// Reset the viewport back to the original.
+	m_Direct3D->ResetViewport();
 
 	return true;
-}
 
-void ApplicationClass::TestIntersection(int mouseX, int mouseY)
-{
-	float pointX, pointY;
-	D3DXMATRIX projectionMatrix, viewMatrix, inverseViewMatrix, worldMatrix, translateMatrix, inverseWorldMatrix;
-	D3DXVECTOR3 direction, origin, rayOrigin, rayDirection;
-	bool intersect, result;
-
-	// Move the mouse cursor coordinates into the -1 to +1 range.
-	pointX = ((2.0f * (float)mouseX) / (float)m_screenWidth) - 1.0f;
-	pointY = (((2.0f * (float)mouseY) / (float)m_screenHeight) - 1.0f) * -1.0f;
-
-	// Adjust the points using the projection matrix to account for the aspect ratio of the viewport.
-	m_D3D->GetProjectionMatrix(projectionMatrix);
-	pointX = pointX / projectionMatrix._11;
-	pointY = pointY / projectionMatrix._22;
-
-	// Get the inverse of the view matrix.
-	m_Camera->GetViewMatrix(viewMatrix);
-	D3DXMatrixInverse(&inverseViewMatrix, NULL, &viewMatrix);
-
-	// Calculate the direction of the picking ray in view space.
-	direction.x = (pointX * inverseViewMatrix._11) + (pointY * inverseViewMatrix._21) + inverseViewMatrix._31;
-	direction.y = (pointX * inverseViewMatrix._12) + (pointY * inverseViewMatrix._22) + inverseViewMatrix._32;
-	direction.z = (pointX * inverseViewMatrix._13) + (pointY * inverseViewMatrix._23) + inverseViewMatrix._33;
-
-	// Get the origin of the picking ray which is the position of the camera.
-	origin = m_Camera->GetPosition();
-
-	// Get the world matrix and translate to the location of the sphere.
-	m_D3D->GetWorldMatrix(worldMatrix);
-	D3DXMatrixTranslation(&translateMatrix, -5.0f, 1.0f, 5.0f);
-	D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &translateMatrix);
-
-	// Now get the inverse of the translated world matrix.
-	D3DXMatrixInverse(&inverseWorldMatrix, NULL, &worldMatrix);
-
-	// Now transform the ray origin and the ray direction from view space to world space.
-	D3DXVec3TransformCoord(&rayOrigin, &origin, &inverseWorldMatrix);
-	D3DXVec3TransformNormal(&rayDirection, &direction, &inverseWorldMatrix);
-
-
-	// Normalize the ray direction.
-	D3DXVec3Normalize(&rayDirection, &rayDirection);
-
-	// Now perform the ray-sphere intersection test.
-	intersect = RaySphereIntersect(rayOrigin, rayDirection, 1.0f);
-
-	if (intersect == true)
-	{
-		// If it does intersect then set the intersection to "yes" in the text string that is displayed to the screen.
-		result = m_Text->SetIntersection(true, m_D3D->GetDeviceContext());
-	}
-	else
-	{
-		// If not then set the intersection to "No".
-		result = m_Text->SetIntersection(false, m_D3D->GetDeviceContext());
-	}
-
-	return;
-}
-
-bool ApplicationClass::RaySphereIntersect(D3DXVECTOR3 rayOrigin, D3DXVECTOR3 rayDirection, float radius)
-{
-	float a, b, c, discriminant;
-
-
-	// Calculate the a, b, and c coefficients.
-	a = (rayDirection.x * rayDirection.x) + (rayDirection.y * rayDirection.y) + (rayDirection.z * rayDirection.z);
-	b = ((rayDirection.x * rayOrigin.x) + (rayDirection.y * rayOrigin.y) + (rayDirection.z * rayOrigin.z)) * 2.0f;
-	c = ((rayOrigin.x * rayOrigin.x) + (rayOrigin.y * rayOrigin.y) + (rayOrigin.z * rayOrigin.z)) - (radius * radius);
-
-	// Find the discriminant.
-	discriminant = (b * b) - (4 * a * c);
-
-	// if discriminant is negative the picking ray missed the sphere, otherwise it intersected the sphere.
-	if (discriminant < 0.0f)
-	{
-		return false;
-	}
-
-	return true;
 }

@@ -91,10 +91,10 @@ void LightClass::GetViewMatrix(D3DXMATRIX& viewMatrix)
 }
 
 
-void LightClass::GenerateOrthoMatrix(float width, float depthPlane, float nearPlane)
+void LightClass::GenerateOrthoMatrix(float width, float height, float screenDepth, float screenNear)
 {
 	// Create the orthographic matrix for the light.
-	D3DXMatrixOrthoLH(&m_orthoMatrix, width, width, nearPlane, depthPlane);
+	D3DXMatrixOrthoLH(&m_orthoMatrix, width, height, screenNear, screenDepth);
 
 	return;
 }

@@ -23,7 +23,7 @@
 #include "inputclass.h"
 #include "timerclass.h"
 #include "positionclass.h"
-#include "graphicsclass.h"
+#include "applicationclass.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -56,7 +56,7 @@ private:
 	InputClass* m_Input;
 	TimerClass* m_Timer;
 	PositionClass* m_Position;
-	GraphicsClass* m_Application;
+	ApplicationClass* m_Application;
 };
 
 

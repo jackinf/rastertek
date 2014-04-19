@@ -130,7 +130,9 @@
     <ClCompile Include="textureshaderclass.cpp" />
     <ClCompile Include="timerclass.cpp" />
     <ClCompile Include="translateshaderclass.cpp" />
+    <ClCompile Include="transparentdepthshaderclass.cpp" />
     <ClCompile Include="transparentshaderclass.cpp" />
+    <ClCompile Include="treeclass.cpp" />
     <ClCompile Include="verticalblurshaderclass.cpp" />
     <ClCompile Include="viewpointclass.cpp" />
     <ClCompile Include="watershaderclass.cpp" />
@@ -187,7 +189,9 @@
     <ClInclude Include="textureshaderclass.h" />
     <ClInclude Include="timerclass.h" />
     <ClInclude Include="translateshaderclass.h" />
+    <ClInclude Include="transparentdepthshaderclass.h" />
     <ClInclude Include="transparentshaderclass.h" />
+    <ClInclude Include="treeclass.h" />
     <ClInclude Include="verticalblurshaderclass.h" />
     <ClInclude Include="viewpointclass.h" />
     <ClInclude Include="watershaderclass.h" />

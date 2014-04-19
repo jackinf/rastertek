@@ -33,7 +33,7 @@ public:
 	void GenerateViewMatrix();
 	void GetViewMatrix(D3DXMATRIX&);
 
-	void GenerateOrthoMatrix(float, float, float);
+	void GenerateOrthoMatrix(float, float, float, float);
 	void GetOrthoMatrix(D3DXMATRIX&);
 
 	void SetDirection(float, float, float);

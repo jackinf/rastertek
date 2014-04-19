@@ -26,7 +26,8 @@ struct VertexInputType
 struct PixelInputType
 {
 	float4 position : SV_POSITION;
-	float2 tex : TEXCOORD0;
+	float4 depthPosition : TEXCOORD0;
+	float2 tex : TEXCOORD1;
 };
 
 
@@ -45,6 +46,9 @@ PixelInputType TransparentVertexShader(VertexInputType input)
 	output.position = mul(input.position, worldMatrix);
 	output.position = mul(output.position, viewMatrix);
 	output.position = mul(output.position, projectionMatrix);
+
+	// Store the position value in a second input value for depth value calculations.
+	output.depthPosition = output.position;
 
 	// Store the texture coordinates for the pixel shader.
 	output.tex = input.tex;
