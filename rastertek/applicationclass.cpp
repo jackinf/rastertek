@@ -30,6 +30,7 @@ ApplicationClass::~ApplicationClass()
 {
 }
 
+
 bool ApplicationClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeight)
 {
 	bool result;
@@ -116,7 +117,7 @@ bool ApplicationClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidt
 	}
 
 	// Initialize the ground model object.
-	result = m_GroundModel->Initialize(m_Direct3D->GetDevice(), "../Engine/data/plane01.txt", L"../Engine/data/seafloor.dds", 2.0f);
+	result = m_GroundModel->Initialize(m_Direct3D->GetDevice(), "../Engine/data/plane01.txt", L"../Engine/data/dirt.dds", 2.0f);
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the ground model object.", L"Error", MB_OK);
@@ -134,8 +135,7 @@ bool ApplicationClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidt
 	}
 
 	// Initialize the shadow shader object.
-	result = m_Tree->Initialize(m_Direct3D->GetDevice(), "../Engine/data/trees/trunk001.txt", L"../Engine/data/trees/trunk001.dds",
-		"../Engine/data/trees/leaf001.txt", L"../Engine/data/trees/leaf001.dds", 0.1f);
+	result = m_Tree->Initialize(m_Direct3D->GetDevice(), "../Engine/data/trees/trunk001.txt", L"../Engine/data/trees/trunk001.dds", "../Engine/data/trees/leaf001.txt", L"../Engine/data/trees/leaf001.dds", 0.1f);
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the tree object.", L"Error", MB_OK);
@@ -190,21 +190,24 @@ bool ApplicationClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidt
 		return false;
 	}
 
-	// Create the transparent depth shader object.
-	m_TransparentDepthShader = new TransparentDepthShaderClass;
-	if (!m_TransparentDepthShader)
+	// Create the shadow shader object.
+	m_ShadowShader = new ShadowShaderClass;
+	if (!m_ShadowShader)
 	{
 		return false;
 	}
 
-	// Initialize the transparent depth shader object.
-	result = m_TransparentDepthShader->Initialize(m_Direct3D->GetDevice(), hwnd);
+	// Initialize the shadow shader object.
+	result = m_ShadowShader->Initialize(m_Direct3D->GetDevice(), hwnd);
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize the transparent depth shader object.", L"Error", MB_OK);
+		MessageBox(hwnd, L"Could not initialize the shadow shader object.", L"Error", MB_OK);
 		return false;
 	}
+
+	return true;
 }
+
 
 void ApplicationClass::Shutdown()
 {
@@ -345,6 +348,7 @@ bool ApplicationClass::Frame()
 	return result;
 }
 
+
 bool ApplicationClass::HandleMovementInput(float frameTime)
 {
 	bool keyDown;
@@ -390,6 +394,7 @@ bool ApplicationClass::HandleMovementInput(float frameTime)
 	return true;
 }
 
+
 void ApplicationClass::UpdateLighting()
 {
 	static float angle = 270.0f;
@@ -414,6 +419,7 @@ void ApplicationClass::UpdateLighting()
 
 	return;
 }
+
 
 bool ApplicationClass::Render()
 {
@@ -474,12 +480,12 @@ bool ApplicationClass::Render()
 		ambientColor, diffuseColor);
 
 	// Enable blending and render the tree leaves.
-	m_Direct3D->EnableAlphaBlending();
+	m_Direct3D->TurnOnAlphaBlending();
 	m_Tree->RenderLeaves(m_Direct3D->GetDeviceContext());
 	m_ShadowShader->Render(m_Direct3D->GetDeviceContext(), m_Tree->GetLeafIndexCount(), worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix,
 		lightOrthoMatrix, m_Tree->GetLeafTexture(), m_RenderTexture->GetShaderResourceView(), m_Light->GetDirection(),
 		ambientColor, diffuseColor);
-	m_Direct3D->DisableAlphaBlending();
+	m_Direct3D->TurnOffAlphaBlending();
 	m_Direct3D->GetWorldMatrix(worldMatrix);
 
 	// Present the rendered scene to the screen.
@@ -487,6 +493,7 @@ bool ApplicationClass::Render()
 
 	return true;
 }
+
 
 bool ApplicationClass::RenderSceneToTexture()
 {
@@ -521,8 +528,7 @@ bool ApplicationClass::RenderSceneToTexture()
 
 	// Render the tree leaves using the depth transparency shader.
 	m_Tree->RenderLeaves(m_Direct3D->GetDeviceContext());
-	result = m_TransparentDepthShader->Render(m_Direct3D->GetDeviceContext(), m_Tree->GetLeafIndexCount(), worldMatrix, lightViewMatrix,
-		lightOrthoMatrix, m_Tree->GetLeafTexture());
+	result = m_TransparentDepthShader->Render(m_Direct3D->GetDeviceContext(), m_Tree->GetLeafIndexCount(), worldMatrix, lightViewMatrix, lightOrthoMatrix, m_Tree->GetLeafTexture());
 	if (!result)
 	{
 		return false;
@@ -546,5 +552,4 @@ bool ApplicationClass::RenderSceneToTexture()
 	m_Direct3D->ResetViewport();
 
 	return true;
-
 }
