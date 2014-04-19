@@ -53,6 +53,8 @@ public:
 
 	void TurnZBufferOn();
 	void TurnZBufferOff();
+	void EnableAlphaBlending();
+	void DisableAlphaBlending();
 
 private:
 	bool m_vsync_enabled;
@@ -71,6 +73,8 @@ private:
 	D3DXMATRIX m_orthoMatrix;
 	D3D11_VIEWPORT m_viewport;
 	ID3D11DepthStencilState* m_depthDisabledStencilState;
+	ID3D11BlendState* m_alphaEnabledBlendState;
+	ID3D11BlendState* m_alphaDisabledBlendState;
 };
 
 #endif

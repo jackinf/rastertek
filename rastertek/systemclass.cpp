@@ -7,9 +7,9 @@
 SystemClass::SystemClass()
 {
 	m_Input = 0;
-	m_Graphics = 0;
 	m_Timer = 0;
 	m_Position = 0;
+	m_Application = 0;
 }
 
 
@@ -51,15 +51,13 @@ bool SystemClass::Initialize()
 		return false;
 	}
 
-	// Create the graphics object.  This object will handle rendering all the graphics for this application.
-	m_Graphics = new GraphicsClass;
-	if (!m_Graphics)
+	m_Application = new ApplicationClass;
+	if (!m_Application)
 	{
 		return false;
 	}
 
-	// Initialize the graphics object.
-	result = m_Graphics->Initialize(screenWidth, screenHeight, m_hwnd);
+	result = m_Application->Initialize(m_hinstance, m_hwnd, screenWidth, screenHeight);
 	if (!result)
 	{
 		return false;
@@ -110,12 +108,11 @@ void SystemClass::Shutdown()
 		m_Timer = 0;
 	}
 
-	// Release the graphics object.
-	if (m_Graphics)
+	if (m_Application)
 	{
-		m_Graphics->Shutdown();
-		delete m_Graphics;
-		m_Graphics = 0;
+		m_Application->Shutdown();
+		delete m_Application;
+		m_Application = 0;
 	}
 
 	// Release the input object.
@@ -207,7 +204,7 @@ bool SystemClass::Frame()
 	m_Position->GetRotation(rotX, rotY, rotZ);
 
 	// Do the frame processing for the graphics object.
-	result = m_Graphics->Frame();
+	result = m_Application->Frame();
 	if (!result)
 	{
 		return false;

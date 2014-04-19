@@ -21,9 +21,9 @@
 // MY CLASS INCLUDES //
 ///////////////////////
 #include "inputclass.h"
-#include "graphicsclass.h"
 #include "timerclass.h"
 #include "positionclass.h"
+#include "applicationclass.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -54,9 +54,9 @@ private:
 	HWND m_hwnd;
 
 	InputClass* m_Input;
-	GraphicsClass* m_Graphics;
 	TimerClass* m_Timer;
 	PositionClass* m_Position;
+	ApplicationClass* m_Application;
 };
 
 

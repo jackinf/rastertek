@@ -8,10 +8,7 @@ TextClass::TextClass()
 {
 	m_Font = 0;
 	m_FontShader = 0;
-
 	m_sentence1 = 0;
-	m_sentence2 = 0;
-	m_sentence3 = 0;
 }
 
 
@@ -69,40 +66,14 @@ bool TextClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCont
 	}
 
 	// Initialize the first sentence.
-	result = InitializeSentence(&m_sentence1, 16, device);
+	result = InitializeSentence(&m_sentence1, 32, device);
 	if (!result)
 	{
 		return false;
 	}
 
 	// Now update the sentence vertex buffer with the new string information.
-	//result = UpdateSentence(m_sentence1, "Hello World", 50, 400, 0.6f, 1.0f, 0.6f, deviceContext);
-	//if (!result)
-	//{
-	//	return false;
-	//}
-
-	// Initialize the second sentence.
-	result = InitializeSentence(&m_sentence2, 16, device);
-	if (!result)
-	{
-		return false;
-	}
-
-	// Now update the sentence vertex buffer with the new string information.
-	//result = UpdateSentence(m_sentence2, "Goodbye ppl", 300, 300, 1.0f, 0.3f, 0.8f, deviceContext);
-	//if (!result)
-	//{
-	//	return false;
-	//}
-
-	result = InitializeSentence(&m_sentence3, 16, device);
-	if (!result)
-	{
-		return false;
-	}
-
-	result = UpdateSentence(m_sentence3, "Third sentence", 100, 60, 0.8, 0.4, 0.8, deviceContext);
+	result = UpdateSentence(m_sentence1, "Intersection: No", 20, 20, 1.0f, 0.0f, 0.0f, deviceContext);
 	if (!result)
 	{
 		return false;
@@ -116,11 +87,6 @@ void TextClass::Shutdown()
 {
 	// Release the first sentence.
 	ReleaseSentence(&m_sentence1);
-
-	// Release the second sentence.
-	ReleaseSentence(&m_sentence2);
-
-	ReleaseSentence(&m_sentence3);
 
 	// Release the font shader object.
 	if (m_FontShader)
@@ -154,150 +120,9 @@ bool TextClass::Render(ID3D11DeviceContext* deviceContext, D3DXMATRIX worldMatri
 		return false;
 	}
 
-	// Draw the second sentence.
-	result = RenderSentence(deviceContext, m_sentence2, worldMatrix, orthoMatrix);
-	if (!result)
-	{
-		return false;
-	}
-	
-	result = RenderSentence(deviceContext, m_sentence3, worldMatrix, orthoMatrix);
-	if (!result)
-	{
-		return false;
-	}
-
 	return true;
 }
 
-bool TextClass::SetMousePosition(int mouseX, int mouseY, ID3D11DeviceContext* deviceContext)
-{
-	char tempString[16];
-	char mouseString[16];
-	bool result;
-
-
-	// Convert the mouseX integer to string format.
-	_itoa_s(mouseX, tempString, 10);
-
-	// Setup the mouseX string.
-	strcpy_s(mouseString, "Mouse X: ");
-	strcat_s(mouseString, tempString);
-
-	// Update the sentence vertex buffer with the new string information.
-	result = UpdateSentence(m_sentence1, mouseString, 20, 20, 1.0f, 1.0f, 1.0f, deviceContext);
-	if (!result)
-	{
-		return false;
-	}
-
-	// Convert the mouseY integer to string format.
-	_itoa_s(mouseY, tempString, 10);
-
-	// Setup the mouseY string.
-	strcpy_s(mouseString, "Mouse Y: ");
-	strcat_s(mouseString, tempString);
-
-	// Update the sentence vertex buffer with the new string information.
-	result = UpdateSentence(m_sentence2, mouseString, 20, 40, 1.0f, 1.0f, 1.0f, deviceContext);
-	if (!result)
-	{
-		return false;
-	}
-
-	return true;
-}
-
-bool TextClass::SetFps(int fps, ID3D11DeviceContext* deviceContext)
-{
-	char tempString[16];
-	char fpsString[16];
-	float red, green, blue;
-	bool result;
-
-	if (fps > 9999)
-	{
-		fps = 9999;
-	}
-
-	_itoa_s(fps, tempString, 10);
-
-	strcpy_s(fpsString, "FPS:");
-	strcat_s(fpsString, tempString);
-
-	if (fps >= 60)
-	{
-		red = 0.0f;
-		green = 1.0f;
-		blue = 0.0f;
-	}
-
-	if (fps >= 30 && fps < 60)
-	{
-		red = 1.0f;
-		green = 1.0f;
-		blue = 0.0f;
-	}
-
-	if (fps < 30)
-	{
-		red = 1.0f;
-		green = 0.0f;
-		blue = 0.0f;
-	}
-
-	result = UpdateSentence(m_sentence1, fpsString, 200, 20, red, green, blue, deviceContext);
-	if (!result)
-	{
-		return false;
-	}
-
-	return true;
-}
-
-bool TextClass::SetCpu(int cpu, ID3D11DeviceContext* deviceContext)
-{
-	char tempString[16];
-	char cpuString[16];
-	bool result;
-
-	_itoa_s(cpu, tempString, 10);
-
-	strcpy_s(cpuString, "CPU: ");
-	strcat_s(cpuString, tempString);
-	strcat_s(cpuString, "%");
-
-	result = UpdateSentence(m_sentence2, cpuString, 200, 40, 0.0f, 1.0f, 0.0f, deviceContext);
-	if (!result)
-	{
-		return false;
-	}
-
-	return true;
-}
-
-
-bool TextClass::SetRenderCount(int renderCount, ID3D11DeviceContext* deviceContext)
-{
-	char tempString[26];
-	char renderCountString[26];
-	bool result;
-
-	_itoa_s(renderCount, tempString, 10);
-
-
-	strcpy_s(renderCountString, "Render count: ");
-	strcat_s(renderCountString, tempString);
-
-	result = UpdateSentence(m_sentence1, renderCountString, 200, 40, 0.0f, 1.0f, 0.0f, deviceContext);
-	if (!result)
-	{
-		return false;
-	}
-
-	return true;
-
-}
 
 bool TextClass::InitializeSentence(SentenceType** sentence, int maxLength, ID3D11Device* device)
 {
@@ -530,4 +355,25 @@ bool TextClass::RenderSentence(ID3D11DeviceContext* deviceContext, SentenceType*
 	}
 
 	return true;
+}
+
+
+bool TextClass::SetIntersection(bool intersection, ID3D11DeviceContext* deviceContext)
+{
+	char intersectionString[32];
+	bool result;
+
+
+	if (intersection)
+	{
+		strcpy_s(intersectionString, "Intersection: Yes");
+		result = UpdateSentence(m_sentence1, intersectionString, 20, 20, 0.0f, 1.0f, 0.0f, deviceContext);
+	}
+	else
+	{
+		strcpy_s(intersectionString, "Intersection: No");
+		result = UpdateSentence(m_sentence1, intersectionString, 20, 20, 1.0f, 0.0f, 0.0f, deviceContext);
+	}
+
+	return result;
 }
