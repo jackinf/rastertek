@@ -89,6 +89,8 @@
     <ClCompile Include="cpuclass.cpp" />
     <ClCompile Include="d3dclass.cpp" />
     <ClCompile Include="debugwindowclass.cpp" />
+    <ClCompile Include="deferredbuffersclass.cpp" />
+    <ClCompile Include="deferredshaderclass.cpp" />
     <ClCompile Include="depthshaderclass.cpp" />
     <ClCompile Include="fadeshaderclass.cpp" />
     <ClCompile Include="fireshaderclass.cpp" />
@@ -149,6 +151,8 @@
     <ClInclude Include="cpuclass.h" />
     <ClInclude Include="d3dclass.h" />
     <ClInclude Include="debugwindowclass.h" />
+    <ClInclude Include="deferredbuffersclass.h" />
+    <ClInclude Include="deferredshaderclass.h" />
     <ClInclude Include="depthshaderclass.h" />
     <ClInclude Include="fadeshaderclass.h" />
     <ClInclude Include="fireshaderclass.h" />
@@ -220,6 +224,16 @@
     </FxCompile>
     <FxCompile Include="..\Engine\clipplanevs.hlsl">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ClipPlaneVertexShader</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="..\Engine\deferredps.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">DeferredPixelShader</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="..\Engine\deferredvs.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">DeferredVertexShader</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
     </FxCompile>

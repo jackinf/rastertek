@@ -7,17 +7,14 @@
 ApplicationClass::ApplicationClass()
 {
 	m_Input = 0;
-	m_Direct3D = 0;
-	m_Timer = 0;
-	m_Position = 0;
+	m_D3D = 0;
 	m_Camera = 0;
 	m_Light = 0;
-	m_GroundModel = 0;
-	m_Tree = 0;
-	m_RenderTexture = 0;
-	m_DepthShader = 0;
-	m_TransparentDepthShader = 0;
-	m_ShadowShader = 0;
+	m_Model = 0;
+	m_FullScreenWindow = 0;
+	m_DeferredBuffers = 0;
+	m_DeferredShader = 0;
+	m_LightShader = 0;
 }
 
 
@@ -52,45 +49,19 @@ bool ApplicationClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidt
 	}
 
 	// Create the Direct3D object.
-	m_Direct3D = new D3DClass;
-	if (!m_Direct3D)
+	m_D3D = new D3DClass;
+	if (!m_D3D)
 	{
 		return false;
 	}
 
 	// Initialize the Direct3D object.
-	result = m_Direct3D->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR);
+	result = m_D3D->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR);
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize DirectX 11.", L"Error", MB_OK);
 		return false;
 	}
-
-	// Create the timer object.
-	m_Timer = new TimerClass;
-	if (!m_Timer)
-	{
-		return false;
-	}
-
-	// Initialize the timer object.
-	result = m_Timer->Initialize();
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize the timer object.", L"Error", MB_OK);
-		return false;
-	}
-
-	// Create the position object.
-	m_Position = new PositionClass;
-	if (!m_Position)
-	{
-		return false;
-	}
-
-	// Set the initial position.
-	m_Position->SetPosition(0.0f, 7.0f, -11.0f);
-	m_Position->SetRotation(20.0f, 0.0f, 0.0f);
 
 	// Create the camera object.
 	m_Camera = new CameraClass;
@@ -98,6 +69,11 @@ bool ApplicationClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidt
 	{
 		return false;
 	}
+
+	// Set the initial position of the camera and build the matrices needed for rendering.
+	m_Camera->SetPosition(0.0f, 0.0f, -10.0f);
+	m_Camera->Render();
+	m_Camera->RenderBaseViewMatrix();
 
 	// Create the light object.
 	m_Light = new LightClass;
@@ -107,156 +83,127 @@ bool ApplicationClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidt
 	}
 
 	// Initialize the light object.
-	m_Light->GenerateOrthoMatrix(15.0f, 15.0f, SHADOWMAP_DEPTH, SHADOWMAP_NEAR);
+	m_Light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
+	m_Light->SetDirection(0.0f, 0.0f, 1.0f);
 
-	// Create the ground model object.
-	m_GroundModel = new ModelClass;
-	if (!m_GroundModel)
+	// Create the model object.
+	m_Model = new ModelClass;
+	if (!m_Model)
 	{
 		return false;
 	}
 
-	// Initialize the ground model object.
-	result = m_GroundModel->Initialize(m_Direct3D->GetDevice(), "../Engine/data/plane01.txt", L"../Engine/data/dirt.dds", 2.0f);
+	// Initialize the model object.
+	result = m_Model->Initialize(m_D3D->GetDevice(), "../Engine/data/cube.txt", L"../Engine/data/seafloor.dds", 1.0f);
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize the ground model object.", L"Error", MB_OK);
+		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
 		return false;
 	}
 
-	// Set the position for the ground model.
-	m_GroundModel->SetPosition(0.0f, 1.0f, 0.0f);
-
-	// Create the tree object.
-	m_Tree = new TreeClass;
-	if (!m_Tree)
+	// Create the full screen ortho window object.
+	m_FullScreenWindow = new OrthoWindowClass;
+	if (!m_FullScreenWindow)
 	{
 		return false;
 	}
 
-	// Initialize the shadow shader object.
-	result = m_Tree->Initialize(m_Direct3D->GetDevice(), "../Engine/data/trees/trunk001.txt", L"../Engine/data/trees/trunk001.dds", "../Engine/data/trees/leaf001.txt", L"../Engine/data/trees/leaf001.dds", 0.1f);
+	// Initialize the full screen ortho window object.
+	result = m_FullScreenWindow->Initialize(m_D3D->GetDevice(), screenWidth, screenHeight);
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize the tree object.", L"Error", MB_OK);
+		MessageBox(hwnd, L"Could not initialize the full screen ortho window object.", L"Error", MB_OK);
 		return false;
 	}
 
-	// Set the position for the tree model.
-	m_Tree->SetPosition(0.0f, 1.0f, 0.0f);
-
-	// Create the render to texture object.
-	m_RenderTexture = new RenderTextureClass;
-	if (!m_RenderTexture)
+	// Create the deferred buffers object.
+	m_DeferredBuffers = new DeferredBuffersClass;
+	if (!m_DeferredBuffers)
 	{
 		return false;
 	}
 
-	// Initialize the render to texture object.
-	result = m_RenderTexture->Initialize(m_Direct3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SHADOWMAP_DEPTH, SHADOWMAP_NEAR);
+	// Initialize the deferred buffers object.
+	result = m_DeferredBuffers->Initialize(m_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR);
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize the render to texture object.", L"Error", MB_OK);
+		MessageBox(hwnd, L"Could not initialize the deferred buffers object.", L"Error", MB_OK);
 		return false;
 	}
 
-	// Create the depth shader object.
-	m_DepthShader = new DepthShaderClass;
-	if (!m_DepthShader)
+	// Create the deferred shader object.
+	m_DeferredShader = new DeferredShaderClass;
+	if (!m_DeferredShader)
 	{
 		return false;
 	}
 
-	// Initialize the depth shader object.
-	result = m_DepthShader->Initialize(m_Direct3D->GetDevice(), hwnd);
+	// Initialize the deferred shader object.
+	result = m_DeferredShader->Initialize(m_D3D->GetDevice(), hwnd);
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize the depth shader object.", L"Error", MB_OK);
+		MessageBox(hwnd, L"Could not initialize the deferred shader object.", L"Error", MB_OK);
 		return false;
 	}
 
-	// Create the transparent depth shader object.
-	m_TransparentDepthShader = new TransparentDepthShaderClass;
-	if (!m_TransparentDepthShader)
+	// Create the light shader object.
+	m_LightShader = new LightShaderClass;
+	if (!m_LightShader)
 	{
 		return false;
 	}
 
-	// Initialize the transparent depth shader object.
-	result = m_TransparentDepthShader->Initialize(m_Direct3D->GetDevice(), hwnd);
+	// Initialize the light shader object.
+	result = m_LightShader->Initialize(m_D3D->GetDevice(), hwnd);
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize the transparent depth shader object.", L"Error", MB_OK);
-		return false;
-	}
-
-	// Create the shadow shader object.
-	m_ShadowShader = new ShadowShaderClass;
-	if (!m_ShadowShader)
-	{
-		return false;
-	}
-
-	// Initialize the shadow shader object.
-	result = m_ShadowShader->Initialize(m_Direct3D->GetDevice(), hwnd);
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize the shadow shader object.", L"Error", MB_OK);
+		MessageBox(hwnd, L"Could not initialize the light shader object.", L"Error", MB_OK);
 		return false;
 	}
 
 	return true;
 }
 
-
 void ApplicationClass::Shutdown()
 {
-	// Release the shadow shader object.
-	if (m_ShadowShader)
+	// Release the light shader object.
+	if (m_LightShader)
 	{
-		m_ShadowShader->Shutdown();
-		delete m_ShadowShader;
-		m_ShadowShader = 0;
+		m_LightShader->Shutdown();
+		delete m_LightShader;
+		m_LightShader = 0;
 	}
 
-	// Release the transparent depth shader object.
-	if (m_TransparentDepthShader)
+	// Release the deferred shader object.
+	if (m_DeferredShader)
 	{
-		m_TransparentDepthShader->Shutdown();
-		delete m_TransparentDepthShader;
-		m_TransparentDepthShader = 0;
+		m_DeferredShader->Shutdown();
+		delete m_DeferredShader;
+		m_DeferredShader = 0;
 	}
 
-	// Release the depth shader object.
-	if (m_DepthShader)
+	// Release the deferred buffers object.
+	if (m_DeferredBuffers)
 	{
-		m_DepthShader->Shutdown();
-		delete m_DepthShader;
-		m_DepthShader = 0;
+		m_DeferredBuffers->Shutdown();
+		delete m_DeferredBuffers;
+		m_DeferredBuffers = 0;
 	}
 
-	// Release the render to texture object.
-	if (m_RenderTexture)
+	// Release the full screen ortho window object.
+	if (m_FullScreenWindow)
 	{
-		m_RenderTexture->Shutdown();
-		delete m_RenderTexture;
-		m_RenderTexture = 0;
+		m_FullScreenWindow->Shutdown();
+		delete m_FullScreenWindow;
+		m_FullScreenWindow = 0;
 	}
 
-	// Release the tree object.
-	if (m_Tree)
+	// Release the model object.
+	if (m_Model)
 	{
-		m_Tree->Shutdown();
-		delete m_Tree;
-		m_Tree = 0;
-	}
-
-	// Release the ground model object.
-	if (m_GroundModel)
-	{
-		m_GroundModel->Shutdown();
-		delete m_GroundModel;
-		m_GroundModel = 0;
+		m_Model->Shutdown();
+		delete m_Model;
+		m_Model = 0;
 	}
 
 	// Release the light object.
@@ -273,26 +220,12 @@ void ApplicationClass::Shutdown()
 		m_Camera = 0;
 	}
 
-	// Release the position object.
-	if (m_Position)
+	// Release the D3D object.
+	if (m_D3D)
 	{
-		delete m_Position;
-		m_Position = 0;
-	}
-
-	// Release the timer object.
-	if (m_Timer)
-	{
-		delete m_Timer;
-		m_Timer = 0;
-	}
-
-	// Release the Direct3D object.
-	if (m_Direct3D)
-	{
-		m_Direct3D->Shutdown();
-		delete m_Direct3D;
-		m_Direct3D = 0;
+		m_D3D->Shutdown();
+		delete m_D3D;
+		m_D3D = 0;
 	}
 
 	// Release the input object.
@@ -305,15 +238,10 @@ void ApplicationClass::Shutdown()
 
 	return;
 }
-
-
 bool ApplicationClass::Frame()
 {
 	bool result;
 
-
-	// Update the system stats.
-	m_Timer->Frame();
 
 	// Read the user input.
 	result = m_Input->Frame();
@@ -328,16 +256,6 @@ bool ApplicationClass::Frame()
 		return false;
 	}
 
-	// Do the frame input processing.
-	result = HandleMovementInput(m_Timer->GetTime());
-	if (!result)
-	{
-		return false;
-	}
-
-	// Update the scene lighting.
-	UpdateLighting();
-
 	// Render the graphics.
 	result = Render();
 	if (!result)
@@ -345,91 +263,18 @@ bool ApplicationClass::Frame()
 		return false;
 	}
 
-	return result;
-}
-
-
-bool ApplicationClass::HandleMovementInput(float frameTime)
-{
-	bool keyDown;
-	float posX, posY, posZ, rotX, rotY, rotZ;
-
-
-	// Set the frame time for calculating the updated position.
-	m_Position->SetFrameTime(frameTime);
-
-	// Handle the input.
-	keyDown = m_Input->IsLeftPressed();
-	m_Position->TurnLeft(keyDown);
-
-	keyDown = m_Input->IsRightPressed();
-	m_Position->TurnRight(keyDown);
-
-	keyDown = m_Input->IsUpPressed();
-	m_Position->MoveForward(keyDown);
-
-	keyDown = m_Input->IsDownPressed();
-	m_Position->MoveBackward(keyDown);
-
-	keyDown = m_Input->IsAPressed();
-	m_Position->MoveUpward(keyDown);
-
-	keyDown = m_Input->IsZPressed();
-	m_Position->MoveDownward(keyDown);
-
-	keyDown = m_Input->IsPgUpPressed();
-	m_Position->LookUpward(keyDown);
-
-	keyDown = m_Input->IsPgDownPressed();
-	m_Position->LookDownward(keyDown);
-
-	// Get the view point position/rotation.
-	m_Position->GetPosition(posX, posY, posZ);
-	m_Position->GetRotation(rotX, rotY, rotZ);
-
-	// Set the position of the camera.
-	m_Camera->SetPosition(posX, posY, posZ);
-	m_Camera->SetRotation(rotX, rotY, rotZ);
-
 	return true;
 }
 
 
-void ApplicationClass::UpdateLighting()
-{
-	static float angle = 270.0f;
-	float radians;
-	static float offsetX = 9.0f;
-
-
-	// Update direction of the light.
-	angle -= 0.03f * m_Timer->GetTime();
-	if (angle < 90.0f)
-	{
-		angle = 270.0f;
-		offsetX = 9.0f;
-	}
-	radians = angle * 0.0174532925f;
-	m_Light->SetDirection(sinf(radians), cosf(radians), 0.0f);
-
-	// Update the lookat and position.
-	offsetX -= 0.003f * m_Timer->GetTime();
-	m_Light->SetPosition(0.0f + offsetX, 10.0f, 1.0f);
-	m_Light->SetLookAt(0.0f - offsetX, 0.0f, 2.0f);
-
-	return;
-}
 
 
 bool ApplicationClass::Render()
 {
-	D3DXMATRIX worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix, lightOrthoMatrix;
-	D3DXVECTOR4 ambientColor, diffuseColor;
-	float posX, posY, posZ;
 	bool result;
+	D3DXMATRIX worldMatrix, baseViewMatrix, orthoMatrix;
 
-
-	// Render the depth of the scene to a texture.
+	// Render the scene to the render buffers.
 	result = RenderSceneToTexture();
 	if (!result)
 	{
@@ -437,59 +282,29 @@ bool ApplicationClass::Render()
 	}
 
 	// Clear the scene.
-	m_Direct3D->BeginScene(0.0f, 0.5f, 0.8f, 1.0f);
+	m_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
 
-	// Generate the view matrix based on the camera's position.
-	m_Camera->Render();
+	// Get the matrices.
+	m_D3D->GetWorldMatrix(worldMatrix);
+	m_Camera->GetBaseViewMatrix(baseViewMatrix);
+	m_D3D->GetOrthoMatrix(orthoMatrix);
 
-	// Generate the light view matrix based on the light's position.
-	m_Light->GenerateViewMatrix();
+	// Turn off the Z buffer to begin all 2D rendering.
+	m_D3D->TurnZBufferOff();
 
-	// Get the matrices from the camera and d3d objects.
-	m_Direct3D->GetWorldMatrix(worldMatrix);
-	m_Camera->GetViewMatrix(viewMatrix);
-	m_Direct3D->GetProjectionMatrix(projectionMatrix);
+	// Put the full screen ortho window vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	m_FullScreenWindow->Render(m_D3D->GetDeviceContext());
 
-	// Get the light's view and projection matrices from the light object.
-	m_Light->GetViewMatrix(lightViewMatrix);
-	m_Light->GetOrthoMatrix(lightOrthoMatrix);
+	// Render the full screen ortho window using the deferred light shader and the render buffers.
+	m_LightShader->Render(m_D3D->GetDeviceContext(), m_FullScreenWindow->GetIndexCount(), worldMatrix, baseViewMatrix, orthoMatrix,
+		m_DeferredBuffers->GetShaderResourceView(0), m_DeferredBuffers->GetShaderResourceView(1),
+		m_Light->GetDirection());
 
-	// Set the light color attributes.
-	diffuseColor = D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f);
-	ambientColor = D3DXVECTOR4(0.15f, 0.15f, 0.15f, 1.0f);
-
-	// Translate to the position of the ground model.
-	m_GroundModel->GetPosition(posX, posY, posZ);
-	D3DXMatrixTranslation(&worldMatrix, posX, posY, posZ);
-
-	// Render the ground model using the shadow shader.
-	m_GroundModel->Render(m_Direct3D->GetDeviceContext());
-	m_ShadowShader->Render(m_Direct3D->GetDeviceContext(), m_GroundModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix,
-		lightOrthoMatrix, m_GroundModel->GetTexture(), m_RenderTexture->GetShaderResourceView(), m_Light->GetDirection(),
-		ambientColor, diffuseColor);
-	m_Direct3D->GetWorldMatrix(worldMatrix);
-
-	// Translate to the position of the tree model.
-	m_Tree->GetPosition(posX, posY, posZ);
-	D3DXMatrixTranslation(&worldMatrix, posX, posY, posZ);
-
-	// Render the tree trunk.
-	m_Tree->RenderTrunk(m_Direct3D->GetDeviceContext());
-	m_ShadowShader->Render(m_Direct3D->GetDeviceContext(), m_Tree->GetTrunkIndexCount(), worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix,
-		lightOrthoMatrix, m_Tree->GetTrunkTexture(), m_RenderTexture->GetShaderResourceView(), m_Light->GetDirection(),
-		ambientColor, diffuseColor);
-
-	// Enable blending and render the tree leaves.
-	m_Direct3D->TurnOnAlphaBlending();
-	m_Tree->RenderLeaves(m_Direct3D->GetDeviceContext());
-	m_ShadowShader->Render(m_Direct3D->GetDeviceContext(), m_Tree->GetLeafIndexCount(), worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix,
-		lightOrthoMatrix, m_Tree->GetLeafTexture(), m_RenderTexture->GetShaderResourceView(), m_Light->GetDirection(),
-		ambientColor, diffuseColor);
-	m_Direct3D->TurnOffAlphaBlending();
-	m_Direct3D->GetWorldMatrix(worldMatrix);
+	// Turn the Z buffer back on now that all 2D rendering has completed.
+	m_D3D->TurnZBufferOn();
 
 	// Present the rendered scene to the screen.
-	m_Direct3D->EndScene();
+	m_D3D->EndScene();
 
 	return true;
 }
@@ -497,59 +312,41 @@ bool ApplicationClass::Render()
 
 bool ApplicationClass::RenderSceneToTexture()
 {
-	D3DXMATRIX worldMatrix, lightViewMatrix, lightOrthoMatrix;
-	float posX, posY, posZ;
-	bool result;
+	D3DXMATRIX worldMatrix, viewMatrix, projectionMatrix;
 
+	// Set the render buffers to be the render target.
+	m_DeferredBuffers->SetRenderTargets(m_D3D->GetDeviceContext());
 
-	// Set the render target to be the render to texture.
-	m_RenderTexture->SetRenderTarget(m_Direct3D->GetDeviceContext());
+	// Clear the render buffers.
+	m_DeferredBuffers->ClearRenderTargets(m_D3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 1.0f);
 
-	// Clear the render to texture.
-	m_RenderTexture->ClearRenderTarget(m_Direct3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 1.0f);
+	// Get the matrices from the camera and d3d objects.
+	m_D3D->GetWorldMatrix(worldMatrix);
+	m_Camera->GetViewMatrix(viewMatrix);
+	m_D3D->GetProjectionMatrix(projectionMatrix);
 
-	// Get the world matrix from the d3d object.
-	m_Direct3D->GetWorldMatrix(worldMatrix);
-
-	// Generate the light view matrix based on the light's position.
-	m_Light->GenerateViewMatrix();
-
-	// Get the view and orthographic matrices from the light object.
-	m_Light->GetViewMatrix(lightViewMatrix);
-	m_Light->GetOrthoMatrix(lightOrthoMatrix);
-
-	// Translate to the position of the tree.
-	m_Tree->GetPosition(posX, posY, posZ);
-	D3DXMatrixTranslation(&worldMatrix, posX, posY, posZ);
-
-	// Render the tree trunk with the depth shader.
-	m_Tree->RenderTrunk(m_Direct3D->GetDeviceContext());
-	m_DepthShader->Render(m_Direct3D->GetDeviceContext(), m_Tree->GetTrunkIndexCount(), worldMatrix, lightViewMatrix, lightOrthoMatrix);
-
-	// Render the tree leaves using the depth transparency shader.
-	m_Tree->RenderLeaves(m_Direct3D->GetDeviceContext());
-	result = m_TransparentDepthShader->Render(m_Direct3D->GetDeviceContext(), m_Tree->GetLeafIndexCount(), worldMatrix, lightViewMatrix, lightOrthoMatrix, m_Tree->GetLeafTexture());
-	if (!result)
+	// Update the rotation variable each frame.
+	static float rotation = 0.0f;
+	rotation += (float)D3DX_PI * 0.01f;
+	if (rotation > 360.0f)
 	{
-		return false;
+		rotation -= 360.0f;
 	}
 
-	// Reset the world matrix.
-	m_Direct3D->GetWorldMatrix(worldMatrix);
+	// Rotate the world matrix by the rotation value so that the cube will spin.
+	D3DXMatrixRotationY(&worldMatrix, rotation);
 
-	// Translate to the position of the ground model.
-	m_GroundModel->GetPosition(posX, posY, posZ);
-	D3DXMatrixTranslation(&worldMatrix, posX, posY, posZ);
+	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	m_Model->Render(m_D3D->GetDeviceContext());
 
-	// Render the ground model with the depth shader.
-	m_GroundModel->Render(m_Direct3D->GetDeviceContext());
-	m_DepthShader->Render(m_Direct3D->GetDeviceContext(), m_GroundModel->GetIndexCount(), worldMatrix, lightViewMatrix, lightOrthoMatrix);
+	// Render the model using the deferred shader.
+	m_DeferredShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, m_Model->GetTexture());
 
-	// Reset the render target back to the original back buffer and not the render to texture anymore.
-	m_Direct3D->SetBackBufferRenderTarget();
+	// Reset the render target back to the original back buffer and not the render buffers anymore.
+	m_D3D->SetBackBufferRenderTarget();
 
 	// Reset the viewport back to the original.
-	m_Direct3D->ResetViewport();
+	m_D3D->ResetViewport();
 
 	return true;
 }

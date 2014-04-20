@@ -123,11 +123,11 @@ bool ShaderManagerClass::RenderLightShader(ID3D11DeviceContext* deviceContext, i
 	ID3D11ShaderResourceView* texture, D3DXVECTOR3 lightDirection, D3DXVECTOR4 ambient, D3DXVECTOR4 diffuse,
 	D3DXVECTOR3 cameraPosition, D3DXVECTOR4 specular, float specularPower)
 {
-	bool result;
+	bool result = true;
 
 
 	// Render the model using the light shader.
-	result = m_LightShader->Render(deviceContext, indexCount, worldMatrix, viewMatrix, projectionMatrix, texture, lightDirection);
+	//result = m_LightShader->Render(deviceContext, indexCount, worldMatrix, viewMatrix, projectionMatrix, texture, , D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 	if (!result)
 	{
 		return false;
